@@ -1,0 +1,14 @@
+.env
+
+*.jpg
+*.png
+
+*.mp4
+
+commands.txt
+
+test.py
+
+card-logger-backend/
+
+__pycache__
