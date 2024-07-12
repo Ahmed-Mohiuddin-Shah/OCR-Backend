@@ -105,6 +105,7 @@ while True:
         continue
 
     start_time = time.time()
+    db_start_insert_time = 0
     print("card entered", name_and_cnic, "at: ", start_time)
 
     frame_list = []
@@ -140,6 +141,7 @@ while True:
     if len(info) > 0:
         name_and_cnic = most_common_name_and_cnic(info)
         print("Name and CNIC:", name_and_cnic)
+        db_start_insert_time = time.time()
         if previously_saved_cnic is None and name_and_cnic[1][0] is not None:
             print("New card detected, previoiusly saved cnic is None and now setting it to: ", name_and_cnic[1][0])
             add_data_to_database(name_and_cnic, all_info)
@@ -158,9 +160,12 @@ while True:
             print("Card was already in holder", name_and_cnic[1][0], "did not save it again")
             card_already_in_holder = True
     end_time = time.time()
+    db_end_insert_time = time.time()
+    db_insert_time = db_end_insert_time - db_start_insert_time
     total_time = end_time - start_time
     total_time_in_milliseconds = total_time * 1000
     print("Time taken for card: ", total_time_in_milliseconds)
+    print("Time taken for db insert: ", db_insert_time)
 
     info = []
     img_counter = 0
