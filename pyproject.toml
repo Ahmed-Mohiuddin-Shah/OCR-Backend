@@ -7,12 +7,17 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-opencv-python = "^4.10.0.84"
 psycopg2 = "^2.9.9"
 python-decouple = "^3.8"
 paddlepaddle = "^2.6.1"
-paddleocr = "^2.8.0"
 requests = "^2.32.3"
+shapely = "^2.0.4"
+pyclipper = "^1.3.0.post5"
+scikit-image = "^0.24.0"
+imgaug = "^0.4.0"
+opencv-python = "^4.10.0.84"
+paddleocr = "^2.8.0"
+numpy = "^1.26.4"
 
 
 [build-system]
