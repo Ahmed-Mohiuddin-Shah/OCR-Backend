@@ -82,7 +82,7 @@ void check_params() {
 }
 
 void ocr(std::vector<cv::String> &cv_all_img_names) {
-  PPOCR ocr;
+  PPOCR ocr = PPOCR();
 
   if (FLAGS_benchmark) {
     ocr.reset_timer();
@@ -120,7 +120,7 @@ void ocr(std::vector<cv::String> &cv_all_img_names) {
 }
 
 void structure(std::vector<cv::String> &cv_all_img_names) {
-  PaddleOCR::PaddleStructure engine;
+  PaddleOCR::PaddleStructure engine = PaddleOCR::PaddleStructure();
 
   if (FLAGS_benchmark) {
     engine.reset_timer();

@@ -58,11 +58,11 @@ pip install paddlepaddle-gpu
 
 pip install
 ```
-pip install paddleocr
+pip install "paddleocr>=2.0.6" # 2.0.6 version is recommended
 ```
 Build and install locally
 ```
-python3 -m build
+python3 setup.py bdist_wheel
 pip3 install dist/paddleocr-x.x.x-py3-none-any.whl # x.x.x is the version number of paddleocr
 ```
 

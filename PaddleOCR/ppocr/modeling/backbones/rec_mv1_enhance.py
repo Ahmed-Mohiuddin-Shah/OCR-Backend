@@ -32,17 +32,15 @@ from paddle.nn.functional import hardswish, hardsigmoid
 
 
 class ConvBNLayer(nn.Layer):
-    def __init__(
-        self,
-        num_channels,
-        filter_size,
-        num_filters,
-        stride,
-        padding,
-        channels=None,
-        num_groups=1,
-        act="hard_swish",
-    ):
+    def __init__(self,
+                 num_channels,
+                 filter_size,
+                 num_filters,
+                 stride,
+                 padding,
+                 channels=None,
+                 num_groups=1,
+                 act='hard_swish'):
         super(ConvBNLayer, self).__init__()
 
         self._conv = Conv2D(
@@ -53,15 +51,13 @@ class ConvBNLayer(nn.Layer):
             padding=padding,
             groups=num_groups,
             weight_attr=ParamAttr(initializer=KaimingNormal()),
-            bias_attr=False,
-        )
+            bias_attr=False)
 
         self._batch_norm = BatchNorm(
             num_filters,
             act=act,
             param_attr=ParamAttr(regularizer=L2Decay(0.0)),
-            bias_attr=ParamAttr(regularizer=L2Decay(0.0)),
-        )
+            bias_attr=ParamAttr(regularizer=L2Decay(0.0)))
 
     def forward(self, inputs):
         y = self._conv(inputs)
@@ -70,18 +66,16 @@ class ConvBNLayer(nn.Layer):
 
 
 class DepthwiseSeparable(nn.Layer):
-    def __init__(
-        self,
-        num_channels,
-        num_filters1,
-        num_filters2,
-        num_groups,
-        stride,
-        scale,
-        dw_size=3,
-        padding=1,
-        use_se=False,
-    ):
+    def __init__(self,
+                 num_channels,
+                 num_filters1,
+                 num_filters2,
+                 num_groups,
+                 stride,
+                 scale,
+                 dw_size=3,
+                 padding=1,
+                 use_se=False):
         super(DepthwiseSeparable, self).__init__()
         self.use_se = use_se
         self._depthwise_conv = ConvBNLayer(
@@ -90,8 +84,7 @@ class DepthwiseSeparable(nn.Layer):
             filter_size=dw_size,
             stride=stride,
             padding=padding,
-            num_groups=int(num_groups * scale),
-        )
+            num_groups=int(num_groups * scale))
         if use_se:
             self._se = SEModule(int(num_filters1 * scale))
         self._pointwise_conv = ConvBNLayer(
@@ -99,8 +92,7 @@ class DepthwiseSeparable(nn.Layer):
             filter_size=1,
             num_filters=int(num_filters2 * scale),
             stride=1,
-            padding=0,
-        )
+            padding=0)
 
     def forward(self, inputs):
         y = self._depthwise_conv(inputs)
@@ -111,15 +103,13 @@ class DepthwiseSeparable(nn.Layer):
 
 
 class MobileNetV1Enhance(nn.Layer):
-    def __init__(
-        self,
-        in_channels=3,
-        scale=0.5,
-        last_conv_stride=1,
-        last_pool_type="max",
-        last_pool_kernel_size=[3, 2],
-        **kwargs,
-    ):
+    def __init__(self,
+                 in_channels=3,
+                 scale=0.5,
+                 last_conv_stride=1,
+                 last_pool_type='max',
+                 last_pool_kernel_size=[3, 2],
+                 **kwargs):
         super().__init__()
         self.scale = scale
         self.block_list = []
@@ -130,8 +120,7 @@ class MobileNetV1Enhance(nn.Layer):
             channels=3,
             num_filters=int(32 * scale),
             stride=2,
-            padding=1,
-        )
+            padding=1)
 
         conv2_1 = DepthwiseSeparable(
             num_channels=int(32 * scale),
@@ -139,8 +128,7 @@ class MobileNetV1Enhance(nn.Layer):
             num_filters2=64,
             num_groups=32,
             stride=1,
-            scale=scale,
-        )
+            scale=scale)
         self.block_list.append(conv2_1)
 
         conv2_2 = DepthwiseSeparable(
@@ -149,8 +137,7 @@ class MobileNetV1Enhance(nn.Layer):
             num_filters2=128,
             num_groups=64,
             stride=1,
-            scale=scale,
-        )
+            scale=scale)
         self.block_list.append(conv2_2)
 
         conv3_1 = DepthwiseSeparable(
@@ -159,8 +146,7 @@ class MobileNetV1Enhance(nn.Layer):
             num_filters2=128,
             num_groups=128,
             stride=1,
-            scale=scale,
-        )
+            scale=scale)
         self.block_list.append(conv3_1)
 
         conv3_2 = DepthwiseSeparable(
@@ -169,8 +155,7 @@ class MobileNetV1Enhance(nn.Layer):
             num_filters2=256,
             num_groups=128,
             stride=(2, 1),
-            scale=scale,
-        )
+            scale=scale)
         self.block_list.append(conv3_2)
 
         conv4_1 = DepthwiseSeparable(
@@ -179,8 +164,7 @@ class MobileNetV1Enhance(nn.Layer):
             num_filters2=256,
             num_groups=256,
             stride=1,
-            scale=scale,
-        )
+            scale=scale)
         self.block_list.append(conv4_1)
 
         conv4_2 = DepthwiseSeparable(
@@ -189,8 +173,7 @@ class MobileNetV1Enhance(nn.Layer):
             num_filters2=512,
             num_groups=256,
             stride=(2, 1),
-            scale=scale,
-        )
+            scale=scale)
         self.block_list.append(conv4_2)
 
         for _ in range(5):
@@ -203,8 +186,7 @@ class MobileNetV1Enhance(nn.Layer):
                 dw_size=5,
                 padding=2,
                 scale=scale,
-                use_se=False,
-            )
+                use_se=False)
             self.block_list.append(conv5)
 
         conv5_6 = DepthwiseSeparable(
@@ -216,8 +198,7 @@ class MobileNetV1Enhance(nn.Layer):
             dw_size=5,
             padding=2,
             scale=scale,
-            use_se=True,
-        )
+            use_se=True)
         self.block_list.append(conv5_6)
 
         conv6 = DepthwiseSeparable(
@@ -229,17 +210,15 @@ class MobileNetV1Enhance(nn.Layer):
             dw_size=5,
             padding=2,
             use_se=True,
-            scale=scale,
-        )
+            scale=scale)
         self.block_list.append(conv6)
 
         self.block_list = nn.Sequential(*self.block_list)
-        if last_pool_type == "avg":
+        if last_pool_type == 'avg':
             self.pool = nn.AvgPool2D(
                 kernel_size=last_pool_kernel_size,
                 stride=last_pool_kernel_size,
-                padding=0,
-            )
+                padding=0)
         else:
             self.pool = nn.MaxPool2D(kernel_size=2, stride=2, padding=0)
         self.out_channels = int(1024 * scale)
@@ -262,8 +241,7 @@ class SEModule(nn.Layer):
             stride=1,
             padding=0,
             weight_attr=ParamAttr(),
-            bias_attr=ParamAttr(),
-        )
+            bias_attr=ParamAttr())
         self.conv2 = Conv2D(
             in_channels=channel // reduction,
             out_channels=channel,
@@ -271,8 +249,7 @@ class SEModule(nn.Layer):
             stride=1,
             padding=0,
             weight_attr=ParamAttr(),
-            bias_attr=ParamAttr(),
-        )
+            bias_attr=ParamAttr())
 
     def forward(self, inputs):
         outputs = self.avg_pool(inputs)

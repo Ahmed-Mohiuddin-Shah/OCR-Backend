@@ -11,4 +11,3 @@ scikit-image
 Shapely
 tqdm
 addict
-visualdl

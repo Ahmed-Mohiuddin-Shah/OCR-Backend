@@ -11,9 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """
-This code is refer from:
+This code is refer from: 
 https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textrecog/encoders/channel_reduction_encoder.py
 https://github.com/open-mmlab/mmocr/blob/main/mmocr/models/textrecog/decoders/robust_scanner_decoder.py
 """
@@ -39,21 +38,18 @@ class BaseDecoder(nn.Layer):
     def forward_test(self, feat, out_enc, img_metas):
         raise NotImplementedError
 
-    def forward(
-        self,
-        feat,
-        out_enc,
-        label=None,
-        valid_ratios=None,
-        word_positions=None,
-        train_mode=True,
-    ):
+    def forward(self,
+                feat,
+                out_enc,
+                label=None,
+                valid_ratios=None,
+                word_positions=None,
+                train_mode=True):
         self.train_mode = train_mode
 
         if train_mode:
-            return self.forward_train(
-                feat, out_enc, label, valid_ratios, word_positions
-            )
+            return self.forward_train(feat, out_enc, label, valid_ratios,
+                                      word_positions)
         return self.forward_test(feat, out_enc, valid_ratios, word_positions)
 
 
@@ -74,8 +70,7 @@ class ChannelReductionEncoder(nn.Layer):
             kernel_size=1,
             stride=1,
             padding=0,
-            weight_attr=nn.initializer.XavierNormal(),
-        )
+            weight_attr=nn.initializer.XavierNormal())
 
     def forward(self, feat):
         """
@@ -98,7 +93,7 @@ class DotProductAttentionLayer(nn.Layer):
     def __init__(self, dim_model=None):
         super().__init__()
 
-        self.scale = dim_model**-0.5 if dim_model is not None else 1.0
+        self.scale = dim_model**-0.5 if dim_model is not None else 1.
 
     def forward(self, query, key, value, h, w, valid_ratios=None):
         query = paddle.transpose(query, (0, 2, 1))
@@ -112,7 +107,7 @@ class DotProductAttentionLayer(nn.Layer):
                 for i, valid_ratio in enumerate(valid_ratios):
                     valid_width = min(w, int(w * valid_ratio + 0.5))
                     if valid_width < w:
-                        logits[i, :, :, valid_width:] = float("-inf")
+                        logits[i, :, :, valid_width:] = float('-inf')
 
         # reshape to (n, c, h, w)
         logits = paddle.reshape(logits, [n, c, t])
@@ -153,20 +148,18 @@ class SequenceAttentionDecoder(BaseDecoder):
         :obj:`mmocr.models.textrecog.recognizer.EncodeDecodeRecognizer`.
     """
 
-    def __init__(
-        self,
-        num_classes=None,
-        rnn_layers=2,
-        dim_input=512,
-        dim_model=128,
-        max_seq_len=40,
-        start_idx=0,
-        mask=True,
-        padding_idx=None,
-        dropout=0,
-        return_feature=False,
-        encode_value=False,
-    ):
+    def __init__(self,
+                 num_classes=None,
+                 rnn_layers=2,
+                 dim_input=512,
+                 dim_model=128,
+                 max_seq_len=40,
+                 start_idx=0,
+                 mask=True,
+                 padding_idx=None,
+                 dropout=0,
+                 return_feature=False,
+                 encode_value=False):
         super().__init__()
 
         self.num_classes = num_classes
@@ -179,25 +172,22 @@ class SequenceAttentionDecoder(BaseDecoder):
         self.mask = mask
 
         self.embedding = nn.Embedding(
-            self.num_classes, self.dim_model, padding_idx=padding_idx
-        )
+            self.num_classes, self.dim_model, padding_idx=padding_idx)
 
         self.sequence_layer = nn.LSTM(
             input_size=dim_model,
             hidden_size=dim_model,
             num_layers=rnn_layers,
             time_major=False,
-            dropout=dropout,
-        )
+            dropout=dropout)
 
         self.attention_layer = DotProductAttentionLayer()
 
         self.prediction = None
         if not self.return_feature:
             pred_num_classes = num_classes - 1
-            self.prediction = nn.Linear(
-                dim_model if encode_value else dim_input, pred_num_classes
-            )
+            self.prediction = nn.Linear(dim_model if encode_value else
+                                        dim_input, pred_num_classes)
 
     def forward_train(self, feat, out_enc, targets, valid_ratios):
         """
@@ -258,15 +248,13 @@ class SequenceAttentionDecoder(BaseDecoder):
         seq_len = self.max_seq_len
         batch_size = feat.shape[0]
 
-        decode_sequence = (
-            paddle.ones((batch_size, seq_len), dtype="int64") * self.start_idx
-        )
+        decode_sequence = (paddle.ones(
+            (batch_size, seq_len), dtype='int64') * self.start_idx)
 
         outputs = []
         for i in range(seq_len):
-            step_out = self.forward_test_step(
-                feat, out_enc, decode_sequence, i, valid_ratios
-            )
+            step_out = self.forward_test_step(feat, out_enc, decode_sequence, i,
+                                              valid_ratios)
             outputs.append(step_out)
             max_idx = paddle.argmax(step_out, axis=1, keepdim=False)
             if i < seq_len - 1:
@@ -276,9 +264,8 @@ class SequenceAttentionDecoder(BaseDecoder):
 
         return outputs
 
-    def forward_test_step(
-        self, feat, out_enc, decode_sequence, current_step, valid_ratios
-    ):
+    def forward_test_step(self, feat, out_enc, decode_sequence, current_step,
+                          valid_ratios):
         """
         Args:
             feat (Tensor): Tensor of shape :math:`(N, D_i, H, W)`.
@@ -334,14 +321,14 @@ class PositionAwareLayer(nn.Layer):
             input_size=dim_model,
             hidden_size=dim_model,
             num_layers=rnn_layers,
-            time_major=False,
-        )
+            time_major=False)
 
         self.mixer = nn.Sequential(
-            nn.Conv2D(dim_model, dim_model, kernel_size=3, stride=1, padding=1),
+            nn.Conv2D(
+                dim_model, dim_model, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2D(dim_model, dim_model, kernel_size=3, stride=1, padding=1),
-        )
+            nn.Conv2D(
+                dim_model, dim_model, kernel_size=3, stride=1, padding=1))
 
     def forward(self, img_feature):
         n, c, h, w = img_feature.shape
@@ -378,20 +365,18 @@ class PositionAttentionDecoder(BaseDecoder):
         This decoder will not predict the final class which is assumed to be
         `<PAD>`. Therefore, its output size is always :math:`C - 1`. `<PAD>`
         is also ignored by loss
-
+        
     """
 
-    def __init__(
-        self,
-        num_classes=None,
-        rnn_layers=2,
-        dim_input=512,
-        dim_model=128,
-        max_seq_len=40,
-        mask=True,
-        return_feature=False,
-        encode_value=False,
-    ):
+    def __init__(self,
+                 num_classes=None,
+                 rnn_layers=2,
+                 dim_input=512,
+                 dim_model=128,
+                 max_seq_len=40,
+                 mask=True,
+                 return_feature=False,
+                 encode_value=False):
         super().__init__()
 
         self.num_classes = num_classes
@@ -404,26 +389,27 @@ class PositionAttentionDecoder(BaseDecoder):
 
         self.embedding = nn.Embedding(self.max_seq_len + 1, self.dim_model)
 
-        self.position_aware_module = PositionAwareLayer(self.dim_model, rnn_layers)
+        self.position_aware_module = PositionAwareLayer(self.dim_model,
+                                                        rnn_layers)
 
         self.attention_layer = DotProductAttentionLayer()
 
         self.prediction = None
         if not self.return_feature:
             pred_num_classes = num_classes - 1
-            self.prediction = nn.Linear(
-                dim_model if encode_value else dim_input, pred_num_classes
-            )
+            self.prediction = nn.Linear(dim_model if encode_value else
+                                        dim_input, pred_num_classes)
 
     def _get_position_index(self, length, batch_size):
         position_index_list = []
         for i in range(batch_size):
-            position_index = paddle.arange(0, end=length, step=1, dtype="int64")
+            position_index = paddle.arange(0, end=length, step=1, dtype='int64')
             position_index_list.append(position_index)
         batch_position_index = paddle.stack(position_index_list, axis=0)
         return batch_position_index
 
-    def forward_train(self, feat, out_enc, targets, valid_ratios, position_index):
+    def forward_train(self, feat, out_enc, targets, valid_ratios,
+                      position_index):
         """
         Args:
             feat (Tensor): Tensor of shape :math:`(N, D_i, H, W)`.
@@ -548,20 +534,18 @@ class RobustScannerDecoder(BaseDecoder):
         :obj:`mmocr.models.textrecog.recognizer.EncodeDecodeRecognizer`.
     """
 
-    def __init__(
-        self,
-        num_classes=None,
-        dim_input=512,
-        dim_model=128,
-        hybrid_decoder_rnn_layers=2,
-        hybrid_decoder_dropout=0,
-        position_decoder_rnn_layers=2,
-        max_seq_len=40,
-        start_idx=0,
-        mask=True,
-        padding_idx=None,
-        encode_value=False,
-    ):
+    def __init__(self,
+                 num_classes=None,
+                 dim_input=512,
+                 dim_model=128,
+                 hybrid_decoder_rnn_layers=2,
+                 hybrid_decoder_dropout=0,
+                 position_decoder_rnn_layers=2,
+                 max_seq_len=40,
+                 start_idx=0,
+                 mask=True,
+                 padding_idx=None,
+                 encode_value=False):
         super().__init__()
         self.num_classes = num_classes
         self.dim_input = dim_input
@@ -584,8 +568,7 @@ class RobustScannerDecoder(BaseDecoder):
             padding_idx=padding_idx,
             dropout=hybrid_decoder_dropout,
             encode_value=encode_value,
-            return_feature=True,
-        )
+            return_feature=True)
 
         # init position decoder
         self.position_decoder = PositionAttentionDecoder(
@@ -596,19 +579,17 @@ class RobustScannerDecoder(BaseDecoder):
             max_seq_len=max_seq_len,
             mask=mask,
             encode_value=encode_value,
-            return_feature=True,
-        )
+            return_feature=True)
 
         self.fusion_module = RobustScannerFusionLayer(
-            self.dim_model if encode_value else dim_input
-        )
+            self.dim_model if encode_value else dim_input)
 
         pred_num_classes = num_classes - 1
-        self.prediction = nn.Linear(
-            dim_model if encode_value else dim_input, pred_num_classes
-        )
+        self.prediction = nn.Linear(dim_model if encode_value else dim_input,
+                                    pred_num_classes)
 
-    def forward_train(self, feat, out_enc, target, valid_ratios, word_positions):
+    def forward_train(self, feat, out_enc, target, valid_ratios,
+                      word_positions):
         """
         Args:
             feat (Tensor): Tensor of shape :math:`(N, D_i, H, W)`.
@@ -617,18 +598,16 @@ class RobustScannerDecoder(BaseDecoder):
             target (dict): A dict with the key ``padded_targets``, a
                 tensor of shape :math:`(N, T)`. Each element is the index of a
                 character.
-            valid_ratios (Tensor):
+            valid_ratios (Tensor): 
             word_positions (Tensor): The position of each word.
 
         Returns:
             Tensor: A raw logit tensor of shape :math:`(N, T, C-1)`.
         """
-        hybrid_glimpse = self.hybrid_decoder.forward_train(
-            feat, out_enc, target, valid_ratios
-        )
+        hybrid_glimpse = self.hybrid_decoder.forward_train(feat, out_enc,
+                                                           target, valid_ratios)
         position_glimpse = self.position_decoder.forward_train(
-            feat, out_enc, target, valid_ratios, word_positions
-        )
+            feat, out_enc, target, valid_ratios, word_positions)
 
         fusion_out = self.fusion_module(hybrid_glimpse, position_glimpse)
 
@@ -642,7 +621,7 @@ class RobustScannerDecoder(BaseDecoder):
             feat (Tensor): Tensor of shape :math:`(N, D_i, H, W)`.
             out_enc (Tensor): Encoder output of shape
                 :math:`(N, D_m, H, W)`.
-            valid_ratios (Tensor):
+            valid_ratios (Tensor): 
             word_positions (Tensor): The position of each word.
         Returns:
             Tensor: The output logit sequence tensor of shape
@@ -651,23 +630,19 @@ class RobustScannerDecoder(BaseDecoder):
         seq_len = self.max_seq_len
         batch_size = feat.shape[0]
 
-        decode_sequence = (
-            paddle.ones((batch_size, seq_len), dtype="int64") * self.start_idx
-        )
+        decode_sequence = (paddle.ones(
+            (batch_size, seq_len), dtype='int64') * self.start_idx)
 
         position_glimpse = self.position_decoder.forward_test(
-            feat, out_enc, valid_ratios, word_positions
-        )
+            feat, out_enc, valid_ratios, word_positions)
 
         outputs = []
         for i in range(seq_len):
             hybrid_glimpse_step = self.hybrid_decoder.forward_test_step(
-                feat, out_enc, decode_sequence, i, valid_ratios
-            )
+                feat, out_enc, decode_sequence, i, valid_ratios)
 
-            fusion_out = self.fusion_module(
-                hybrid_glimpse_step, position_glimpse[:, i, :]
-            )
+            fusion_out = self.fusion_module(hybrid_glimpse_step,
+                                            position_glimpse[:, i, :])
 
             char_out = self.prediction(fusion_out)
             char_out = F.softmax(char_out, -1)
@@ -683,26 +658,24 @@ class RobustScannerDecoder(BaseDecoder):
 
 class RobustScannerHead(nn.Layer):
     def __init__(
-        self,
-        out_channels,  # 90 + unknown + start + padding
-        in_channels,
-        enc_outchannles=128,
-        hybrid_dec_rnn_layers=2,
-        hybrid_dec_dropout=0,
-        position_dec_rnn_layers=2,
-        start_idx=0,
-        max_text_length=40,
-        mask=True,
-        padding_idx=None,
-        encode_value=False,
-        **kwargs,
-    ):
+            self,
+            out_channels,  # 90 + unknown + start + padding
+            in_channels,
+            enc_outchannles=128,
+            hybrid_dec_rnn_layers=2,
+            hybrid_dec_dropout=0,
+            position_dec_rnn_layers=2,
+            start_idx=0,
+            max_text_length=40,
+            mask=True,
+            padding_idx=None,
+            encode_value=False,
+            **kwargs):
         super(RobustScannerHead, self).__init__()
 
         # encoder module
         self.encoder = ChannelReductionEncoder(
-            in_channels=in_channels, out_channels=enc_outchannles
-        )
+            in_channels=in_channels, out_channels=enc_outchannles)
 
         # decoder module
         self.decoder = RobustScannerDecoder(
@@ -716,13 +689,12 @@ class RobustScannerHead(nn.Layer):
             start_idx=start_idx,
             mask=mask,
             padding_idx=padding_idx,
-            encode_value=encode_value,
-        )
+            encode_value=encode_value)
 
     def forward(self, inputs, targets=None):
-        """
+        '''
         targets: [label, valid_ratio, word_positions]
-        """
+        '''
         out_enc = self.encoder(inputs)
         valid_ratios = None
         word_positions = targets[-1]
@@ -732,10 +704,9 @@ class RobustScannerHead(nn.Layer):
 
         if self.training:
             label = targets[0]  # label
-            label = paddle.to_tensor(label, dtype="int64")
-            final_out = self.decoder(
-                inputs, out_enc, label, valid_ratios, word_positions
-            )
+            label = paddle.to_tensor(label, dtype='int64')
+            final_out = self.decoder(inputs, out_enc, label, valid_ratios,
+                                     word_positions)
         if not self.training:
             final_out = self.decoder(
                 inputs,
@@ -743,6 +714,5 @@ class RobustScannerHead(nn.Layer):
                 label=None,
                 valid_ratios=valid_ratios,
                 word_positions=word_positions,
-                train_mode=False,
-            )
+                train_mode=False)
         return final_out

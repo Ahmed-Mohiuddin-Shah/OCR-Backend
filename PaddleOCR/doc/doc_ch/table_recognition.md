@@ -81,7 +81,7 @@ TableGeneration是一个开源表格数据集生成工具，其通过浏览器�
 
 ## 1.4 数据标注
 
-数据标注可参考[PPOCRLabel](https://github.com/PFCCLab/PPOCRLabel/blob/main/README_ch.md)
+数据标注可参考[PPOCRLabel](../../PPOCRLabel/README_ch.md)
 
 # 2. 开始训练
 
@@ -112,7 +112,7 @@ python3 -m paddle.distributed.launch --gpus '0,1,2,3'  tools/train.py -c configs
 
 log 中自动打印如下信息：
 
-|  字段   |   含义   |
+|  字段   |   含义   |  
 | :----: | :------: |
 |  epoch | 当前迭代轮次 |
 |  global_step  | 当前迭代次数 |
@@ -290,13 +290,13 @@ python3 -m paddle.distributed.launch --gpus '0' tools/eval.py -c configs/table/S
 
 ```
 output/SLANet/
-├── best_accuracy.pdopt
-├── best_accuracy.pdparams
-├── best_accuracy.states
-├── config.yml
-├── latest.pdopt
-├── latest.pdparams
-├── latest.states
+├── best_accuracy.pdopt  
+├── best_accuracy.pdparams  
+├── best_accuracy.states  
+├── config.yml  
+├── latest.pdopt  
+├── latest.pdparams  
+├── latest.states  
 └── train.log
 ```
 其中 best_accuracy.* 是评估集上的最优模型；latest.* 是最后一个epoch的模型。

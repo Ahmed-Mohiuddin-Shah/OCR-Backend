@@ -22,8 +22,7 @@ class Cosine(CosineAnnealingDecay):
     def __init__(self, lr, step_each_epoch, epochs, **kwargs):
         super(Cosine, self).__init__(
             learning_rate=lr,
-            T_max=step_each_epoch * epochs,
-        )
+            T_max=step_each_epoch * epochs, )
 
         self.update_specified = False
 
@@ -59,11 +58,8 @@ class CosineWarmup(LinearWarmup):
     """
 
     def __init__(self, lr, step_each_epoch, epochs, warmup_epoch=5, **kwargs):
-        assert (
-            epochs > warmup_epoch
-        ), "total epoch({}) should be larger than warmup_epoch({}) in CosineWarmup.".format(
-            epochs, warmup_epoch
-        )
+        assert epochs > warmup_epoch, "total epoch({}) should be larger than warmup_epoch({}) in CosineWarmup.".format(
+            epochs, warmup_epoch)
         warmup_step = warmup_epoch * step_each_epoch
         start_lr = 0.0
         end_lr = lr
@@ -73,8 +69,7 @@ class CosineWarmup(LinearWarmup):
             learning_rate=lr_sch,
             warmup_steps=warmup_step,
             start_lr=start_lr,
-            end_lr=end_lr,
-        )
+            end_lr=end_lr)
 
         self.update_specified = False
 
@@ -92,15 +87,13 @@ class ExponentialWarmup(LinearWarmup):
         warmup_epoch(int): epoch num of warmup
     """
 
-    def __init__(
-        self,
-        lr,
-        step_each_epoch,
-        decay_epochs=2.4,
-        decay_rate=0.97,
-        warmup_epoch=5,
-        **kwargs,
-    ):
+    def __init__(self,
+                 lr,
+                 step_each_epoch,
+                 decay_epochs=2.4,
+                 decay_rate=0.97,
+                 warmup_epoch=5,
+                 **kwargs):
         warmup_step = warmup_epoch * step_each_epoch
         start_lr = 0.0
         end_lr = lr
@@ -110,8 +103,7 @@ class ExponentialWarmup(LinearWarmup):
             learning_rate=lr_sch,
             warmup_steps=warmup_step,
             start_lr=start_lr,
-            end_lr=end_lr,
-        )
+            end_lr=end_lr)
 
         # NOTE: hac method to update exponential lr scheduler
         self.update_specified = True
@@ -120,7 +112,7 @@ class ExponentialWarmup(LinearWarmup):
         self.step_each_epoch = step_each_epoch
 
 
-class LearningRateBuilder:
+class LearningRateBuilder():
     """
     Build learning rate variable
     https://www.paddlepaddle.org.cn/documentation/docs/zh/api_cn/layers_cn.html
@@ -129,9 +121,11 @@ class LearningRateBuilder:
         params(dict): parameters used for init the class
     """
 
-    def __init__(
-        self, function="Linear", params={"lr": 0.1, "steps": 100, "end_lr": 0.0}
-    ):
+    def __init__(self,
+                 function='Linear',
+                 params={'lr': 0.1,
+                         'steps': 100,
+                         'end_lr': 0.0}):
         self.function = function
         self.params = params
 
@@ -183,9 +177,12 @@ class Momentum(object):
         regularization (WeightDecayRegularizer, optional) - The strategy of regularization.
     """
 
-    def __init__(
-        self, learning_rate, momentum, parameter_list=None, regularization=None, **args
-    ):
+    def __init__(self,
+                 learning_rate,
+                 momentum,
+                 parameter_list=None,
+                 regularization=None,
+                 **args):
         super(Momentum, self).__init__()
         self.learning_rate = learning_rate
         self.momentum = momentum
@@ -197,8 +194,7 @@ class Momentum(object):
             learning_rate=self.learning_rate,
             momentum=self.momentum,
             parameters=self.parameter_list,
-            weight_decay=self.regularization,
-        )
+            weight_decay=self.regularization)
         return opt
 
 
@@ -214,16 +210,14 @@ class RMSProp(object):
         regularization (WeightDecayRegularizer, optional) - The strategy of regularization.
     """
 
-    def __init__(
-        self,
-        learning_rate,
-        momentum,
-        rho=0.95,
-        epsilon=1e-6,
-        parameter_list=None,
-        regularization=None,
-        **args,
-    ):
+    def __init__(self,
+                 learning_rate,
+                 momentum,
+                 rho=0.95,
+                 epsilon=1e-6,
+                 parameter_list=None,
+                 regularization=None,
+                 **args):
         super(RMSProp, self).__init__()
         self.learning_rate = learning_rate
         self.momentum = momentum
@@ -239,8 +233,7 @@ class RMSProp(object):
             rho=self.rho,
             epsilon=self.epsilon,
             parameters=self.parameter_list,
-            weight_decay=self.regularization,
-        )
+            weight_decay=self.regularization)
         return opt
 
 
@@ -253,23 +246,26 @@ class OptimizerBuilder(object):
         regularizer (dict): parameters used for create regularization
     """
 
-    def __init__(self, function="Momentum", params={"momentum": 0.9}, regularizer=None):
+    def __init__(self,
+                 function='Momentum',
+                 params={'momentum': 0.9},
+                 regularizer=None):
         self.function = function
         self.params = params
         # create regularizer
         if regularizer is not None:
             mod = sys.modules[__name__]
-            reg_func = regularizer["function"] + "Decay"
-            del regularizer["function"]
+            reg_func = regularizer['function'] + 'Decay'
+            del regularizer['function']
             reg = getattr(mod, reg_func)(**regularizer)()
-            self.params["regularization"] = reg
+            self.params['regularization'] = reg
 
     def __call__(self, learning_rate, parameter_list=None):
         mod = sys.modules[__name__]
         opt = getattr(mod, self.function)
-        return opt(
-            learning_rate=learning_rate, parameter_list=parameter_list, **self.params
-        )()
+        return opt(learning_rate=learning_rate,
+                   parameter_list=parameter_list,
+                   **self.params)()
 
 
 def create_optimizer(config, parameter_list=None):
@@ -296,35 +292,34 @@ def create_optimizer(config, parameter_list=None):
         an optimizer instance
     """
     # create learning_rate instance
-    lr_config = config["LEARNING_RATE"]
-    lr_config["params"].update(
-        {
-            "epochs": config["epoch"],
-            "step_each_epoch": config["total_images"] // config["TRAIN"]["batch_size"],
-        }
-    )
+    lr_config = config['LEARNING_RATE']
+    lr_config['params'].update({
+        'epochs': config['epoch'],
+        'step_each_epoch':
+        config['total_images'] // config['TRAIN']['batch_size'],
+    })
     lr = LearningRateBuilder(**lr_config)()
 
     # create optimizer instance
-    opt_config = deepcopy(config["OPTIMIZER"])
+    opt_config = deepcopy(config['OPTIMIZER'])
 
     opt = OptimizerBuilder(**opt_config)
     return opt(lr, parameter_list), lr
 
 
 def create_multi_optimizer(config, parameter_list=None):
-    """ """
+    """
+    """
     # create learning_rate instance
-    lr_config = config["LEARNING_RATE"]
-    lr_config["params"].update(
-        {
-            "epochs": config["epoch"],
-            "step_each_epoch": config["total_images"] // config["TRAIN"]["batch_size"],
-        }
-    )
+    lr_config = config['LEARNING_RATE']
+    lr_config['params'].update({
+        'epochs': config['epoch'],
+        'step_each_epoch':
+        config['total_images'] // config['TRAIN']['batch_size'],
+    })
     lr = LearningRateBuilder(**lr_config)()
 
     # create optimizer instance
-    opt_config = deepcopy.copy(config["OPTIMIZER"])
+    opt_config = deepcopy.copy(config['OPTIMIZER'])
     opt = OptimizerBuilder(**opt_config)
     return opt(lr, parameter_list), lr

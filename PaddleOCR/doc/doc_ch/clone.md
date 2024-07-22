@@ -20,3 +20,4 @@ git clone https://gitee.com/paddlepaddle/PaddleOCR
 cd PaddleOCR
 pip3 install -r requirements.txt
 ```
+

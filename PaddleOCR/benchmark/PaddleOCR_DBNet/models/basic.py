@@ -5,19 +5,17 @@ from paddle import nn
 
 
 class ConvBnRelu(nn.Layer):
-    def __init__(
-        self,
-        in_channels,
-        out_channels,
-        kernel_size,
-        stride=1,
-        padding=0,
-        dilation=1,
-        groups=1,
-        bias=True,
-        padding_mode="zeros",
-        inplace=True,
-    ):
+    def __init__(self,
+                 in_channels,
+                 out_channels,
+                 kernel_size,
+                 stride=1,
+                 padding=0,
+                 dilation=1,
+                 groups=1,
+                 bias=True,
+                 padding_mode='zeros',
+                 inplace=True):
         super().__init__()
         self.conv = nn.Conv2D(
             in_channels=in_channels,
@@ -28,8 +26,7 @@ class ConvBnRelu(nn.Layer):
             dilation=dilation,
             groups=groups,
             bias_attr=bias,
-            padding_mode=padding_mode,
-        )
+            padding_mode=padding_mode)
         self.bn = nn.BatchNorm2D(out_channels)
         self.relu = nn.ReLU()
 
