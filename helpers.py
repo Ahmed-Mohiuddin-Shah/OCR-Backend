@@ -109,7 +109,7 @@ def get_cropped_frame(image):
             # Crop ROI
             ROI = image[y:y+h, x:x+w]
 
-    cv2.imshow("Frame", ROI)
+    # cv2.imshow("Frame", ROI)
     return ROI
 
 def check_if_majority_of_frame_is_white(image):
