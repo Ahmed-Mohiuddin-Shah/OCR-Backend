@@ -120,6 +120,7 @@ while True:
         frame_list.append(frame)
         
     should_flip = is_upside_down(ocr, get_cropped_frame(frame_list[4]))
+    print("Should flip: ", should_flip)
     for frame in frame_list:
         frame = get_cropped_frame(frame)
         corect_orientation_frame = correct_orientation(frame, should_flip)
