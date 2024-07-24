@@ -68,11 +68,24 @@ def most_common_name_and_cnic(data):
     # Separate names and CNICs into their own lists
     names = [name for name, cnic in data]
     cnics = [cnic for name, cnic in data]
-    
+
+
+    check_if_all_cnics_none = all(cnic is None for cnic in cnics)
+    check_if_all_names_none = all(name is None for name in names)
+
+    if check_if_all_cnics_none:
+        return (None, 0), (None, 0)
+
+    # remove none from cnics
+    cnics = [cnic for cnic in cnics if cnic is not None]
+
+    if not check_if_all_names_none:
+        names = [name for name in names if name is not None]
+
     # Use Counter to count occurrences
     name_counter = Counter(names)
     cnic_counter = Counter(cnics)
-    
+
     # Find the most common name and CNIC
     most_common_name = name_counter.most_common(1)
     most_common_cnic = cnic_counter.most_common(1)
