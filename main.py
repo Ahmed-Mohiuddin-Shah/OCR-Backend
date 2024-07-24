@@ -17,7 +17,7 @@ import logging
 logger = get_logger()
 logger.setLevel(logging.ERROR)
 
-cap = cv2.VideoCapture(config("VIDEO_SOURCE"))
+cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
 print("Video source set" if cap.isOpened() else "Video source not set")
 
 # # Remove the existing model weights if they exist
@@ -64,7 +64,7 @@ while True:
     if frame is None:
         print("Frame is None")
         print("Reconnecting to camera")
-        cap = cv2.VideoCapture(config("VIDEO_SOURCE"))
+        cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
         print("Connected", "system started at: ", count)
         continue
 
@@ -114,7 +114,7 @@ while True:
         if frame is None:
             print("Frame is None")
             print("Reconnecting to camera")
-            cap = cv2.VideoCapture(config("VIDEO_SOURCE"))
+            cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
             print("Connected")
             continue
         frame_list.append(frame)
