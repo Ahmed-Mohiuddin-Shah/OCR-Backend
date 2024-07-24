@@ -81,9 +81,13 @@ def most_common_name_and_cnic(data):
     return most_common_name[0] if most_common_name else (None, 0), most_common_cnic[0] if most_common_cnic else (None, 0)
 
 def get_cropped_frame(image):
+
+    x1, y1 = 51, 207
+    x2, y2 = 721, 751
     
-    image = image[300:950, 400:1400]
+    image = image[y1:y2, x1:x2]
     ROI = image
+
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # cv2.imshow('gray', gray)
@@ -105,6 +109,7 @@ def get_cropped_frame(image):
             # Crop ROI
             ROI = image[y:y+h, x:x+w]
 
+    cv2.imshow("Frame", ROI)
     return ROI
 
 def check_if_majority_of_frame_is_white(image):
@@ -218,7 +223,7 @@ def save_cnic_image(image, filename='image.jpg'):
     if not os.path.exists(config('CNIC_SAVE_PATH')):
         os.makedirs(config('CNIC_SAVE_PATH'))
     
-    cv2.imwrite(f'{config('CNIC_SAVE_PATH')}/{filename}', image)
+    cv2.imwrite(f"{config('CNIC_SAVE_PATH')}/{filename}", image)
     print(f"Image saved as {filename}.")
 
 import psycopg2
