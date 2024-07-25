@@ -325,3 +325,23 @@ def add_data_to_database(name_and_cnic, all_info):
     conn.close()
 
     print(f"Data added to database: {name_and_cnic}")
+
+
+def get_center_frame(frame):
+    # get 50x50 pixel from the center of the frame
+    # using current dimensions
+    height, width = frame.shape[:2]
+    x1 = width // 2 - 25
+    x2 = width // 2 + 25
+    y1 = height // 2 - 25
+    y2 = height // 2 + 25
+    return frame[y1:y2, x1:x2]
+
+def check_if_card_in_frame(frame):
+
+    frame = get_center_frame(frame)
+    
+    if np.mean(frame) > 150:
+        return False
+    
+    return True

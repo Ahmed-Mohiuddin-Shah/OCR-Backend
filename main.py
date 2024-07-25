@@ -76,6 +76,18 @@ while True:
 
     if cropped_frame is None:
         continue
+
+
+    if not card_already_in_holder:
+        if not check_if_card_in_frame(cropped_frame):
+            print("Card not in holder")
+            continue
+
+    if card_already_in_holder:
+        if check_if_card_in_frame(cropped_frame):
+            print("Card already in holder")
+            continue
+
     current_info = do_OCR_on_cropped_frame(ocr, cropped_frame)
 
     img_counter = 0
