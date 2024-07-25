@@ -121,7 +121,8 @@ while True:
     print("card entered", name_and_cnic, "at: ", start_time)
 
     frame_list = []
-    for _ in range(5):
+    number_of_frames = 1
+    for _ in range(number_of_frames):
         ret, frame = cap.read()
         if frame is None:
             print("Frame is None")
@@ -131,7 +132,7 @@ while True:
             continue
         frame_list.append(frame)
         
-    should_flip = is_upside_down(ocr, get_cropped_frame(frame_list[4]))
+    should_flip = is_upside_down(ocr, get_cropped_frame(frame_list[0]))
     print("Should flip: ", should_flip)
     for frame in frame_list:
         frame = get_cropped_frame(frame)
