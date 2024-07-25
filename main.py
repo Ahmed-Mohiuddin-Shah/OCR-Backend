@@ -122,6 +122,14 @@ while True:
 
     frame_list = []
     number_of_frames = 1
+    for _ in range(2):
+        ret, frame = cap.read()
+        if frame is None:
+            print("Frame is None")
+            print("Reconnecting to camera")
+            cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
+            print("Connected")
+            continue
     for _ in range(number_of_frames):
         ret, frame = cap.read()
         if frame is None:
