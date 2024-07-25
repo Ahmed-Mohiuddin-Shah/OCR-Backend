@@ -144,7 +144,7 @@ while True:
         name_and_cnic = extract_name_and_cnic(parse_data(current_info))
         # print(name_and_cnic)
         img_counter += 1
-        if name_and_cnic[1] is not None and img_counter == 5:
+        if name_and_cnic[1] is not None and img_counter == number_of_frames:
             all_info = current_info
             save_image = corect_orientation_frame
         print(name_and_cnic)
