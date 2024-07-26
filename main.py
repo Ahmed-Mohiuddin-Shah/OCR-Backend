@@ -88,6 +88,17 @@ while True:
             print("Card already in holder")
             continue
 
+    for _ in range(3):
+        ret, frame = cap.read()
+        if frame is None:
+            print("Frame is None")
+            print("Reconnecting to camera")
+            cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
+            print("Connected")
+            continue
+    
+    cropped_frame = get_cropped_frame(frame)
+
     frame_list = []
     number_of_frames = 1
     current_info = do_OCR_on_cropped_frame(ocr, cropped_frame)
