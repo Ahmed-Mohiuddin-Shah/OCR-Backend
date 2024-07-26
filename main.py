@@ -122,6 +122,8 @@ while True:
     db_start_insert_time = 0
     print("card entered", name_and_cnic, "at: ", start_time)
 
+    # this is dev branch
+
     # for _ in range(2):
     #     ret, frame = cap.read()
     #     if frame is None:
