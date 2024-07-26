@@ -154,6 +154,20 @@ while True:
     img_counter += 1
     if name_and_cnic[1] is not None and img_counter == number_of_frames:
         all_info = current_info
+        for _ in range(2):
+            ret, frame = cap.read()
+            if frame is None:
+                print("Frame is None")
+                print("Reconnecting to camera")
+                cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
+                print("Connected")
+        ret, frame = cap.read()
+        if frame is None:
+            print("Frame is None")
+            print("Reconnecting to camera")
+            cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
+            print("Connected")
+        cropped_frame = get_cropped_frame(frame)
         save_image = cropped_frame
     print(name_and_cnic)
     info.append(name_and_cnic)
