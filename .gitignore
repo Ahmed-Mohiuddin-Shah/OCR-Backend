@@ -20,3 +20,4 @@ __pycache__
 *.log
 
 detections_with_bbox.csv
+inference_results
