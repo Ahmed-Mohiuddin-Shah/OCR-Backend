@@ -73,51 +73,51 @@ class TextSystem(object):
 
         start = time.time()
         ori_im = img.copy()
-        dt_boxes, elapse = self.text_detector(img)
+        dt_boxes_list, elapse = self.text_detector(img)
         time_dict['det'] = elapse
 
-        if dt_boxes is None:
-            logger.debug("no dt_boxes found, elapsed : {}".format(elapse))
-            end = time.time()
-            time_dict['all'] = end - start
-            return None, None, time_dict
-        else:
-            logger.debug("dt_boxes num : {}, elapsed : {}".format(
-                len(dt_boxes), elapse))
         img_crop_list = []
+        dt_boxes_count = []
+        for ind, dt_boxes in enumerate(dt_boxes_list):
+            dt_boxes = sorted_boxes(dt_boxes)
+            dt_boxes_count.append(len(dt_boxes))
 
-        dt_boxes = sorted_boxes(dt_boxes)
+            for bno in range(len(dt_boxes)):
+                tmp_box = copy.deepcopy(dt_boxes[bno])
+                if self.args.det_box_type == "quad":
+                    img_crop = get_rotate_crop_image(ori_im[ind], tmp_box)
+                else:
+                    img_crop = get_minarea_rect_crop(ori_im[ind], tmp_box)
+                img_crop_list.append(img_crop)
+            if self.use_angle_cls and cls:
+                img_crop_list, angle_list, elapse = self.text_classifier(
+                    img_crop_list)
+                time_dict['cls'] = elapse
+                logger.debug("cls num  : {}, elapsed : {}".format(
+                    len(img_crop_list), elapse))
 
-        for bno in range(len(dt_boxes)):
-            tmp_box = copy.deepcopy(dt_boxes[bno])
-            if self.args.det_box_type == "quad":
-                img_crop = get_rotate_crop_image(ori_im, tmp_box)
-            else:
-                img_crop = get_minarea_rect_crop(ori_im, tmp_box)
-            img_crop_list.append(img_crop)
-        if self.use_angle_cls and cls:
-            img_crop_list, angle_list, elapse = self.text_classifier(
-                img_crop_list)
-            time_dict['cls'] = elapse
-            logger.debug("cls num  : {}, elapsed : {}".format(
-                len(img_crop_list), elapse))
-
-        rec_res, elapse = self.text_recognizer(img_crop_list)
+        batch_rec_res, elapse = self.text_recognizer(img_crop_list)
         time_dict['rec'] = elapse
-        logger.debug("rec_res num  : {}, elapsed : {}".format(
-            len(rec_res), elapse))
-        if self.args.save_crop_res:
-            self.draw_crop_rec_res(self.args.crop_res_save_dir, img_crop_list,
-                                   rec_res)
-        filter_boxes, filter_rec_res = [], []
-        for box, rec_result in zip(dt_boxes, rec_res):
-            text, score = rec_result[0], rec_result[1]
-            if score >= self.drop_score:
-                filter_boxes.append(box)
-                filter_rec_res.append(rec_result)
+        i=0
+        batch_filter_boxes = []
+        batch_filter_rec_res = []
+        for ind, dt_boxes in enumerate(dt_boxes_list):
+            dt_boxes = sorted_boxes(dt_boxes)
+            rec_res = batch_rec_res[i:len(dt_boxes)+i]
+            i += len(dt_boxes)
+
+            filter_boxes, filter_rec_res = [], []
+            for box, rec_result in zip(dt_boxes, rec_res):
+                text, score = rec_result
+                if score >= self.drop_score:
+                    filter_boxes.append(box)
+                    filter_rec_res.append(rec_result)
+
+            batch_filter_boxes.append(filter_boxes)
+            batch_filter_rec_res.append(filter_rec_res)
         end = time.time()
         time_dict['all'] = end - start
-        return filter_boxes, filter_rec_res, time_dict
+        return batch_filter_boxes, batch_filter_rec_res, time_dict
 
 
 def sorted_boxes(dt_boxes):
@@ -143,8 +143,8 @@ def sorted_boxes(dt_boxes):
                 break
     return _boxes
 
-
 def main(args):
+
     image_file_list = get_image_file_list(args.image_dir)
     image_file_list = image_file_list[args.process_id::args.total_process_num]
     text_sys = TextSystem(args)
@@ -154,7 +154,7 @@ def main(args):
     draw_img_save_dir = args.draw_img_save_dir
     os.makedirs(draw_img_save_dir, exist_ok=True)
     save_results = []
-
+    
     logger.info(
         "In PP-OCRv3, rec_image_shape parameter defaults to '3, 48, 320', "
         "if you are using recognition model with PP-OCRv2 or an older version, please set --rec_image_shape='3,32,320"
@@ -170,6 +170,7 @@ def main(args):
     cpu_mem, gpu_mem, gpu_util = 0, 0, 0
     _st = time.time()
     count = 0
+
     for idx, image_file in enumerate(image_file_list):
 
         img, flag_gif, flag_pdf = check_and_read(image_file)
@@ -252,7 +253,6 @@ def main(args):
             'w',
             encoding='utf-8') as f:
         f.writelines(save_results)
-
 
 if __name__ == "__main__":
     args = utility.parse_args()

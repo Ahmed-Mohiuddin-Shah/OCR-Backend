@@ -15,10 +15,11 @@
 import os
 import sys
 import importlib
+import importlib.util
 
 __dir__ = os.path.dirname(__file__)
 
-import paddle
+# import paddle
 
 sys.path.append(os.path.join(__dir__, ''))
 

@@ -420,7 +420,7 @@ def main(args, vid_path):
             a2, b2 = 1000, 700
             img = img[y1:y2, x1:x2]
             
-            print(img2)
+            # print(img2)
             img2 = img2[b1:b2, a1:a2]
             #img = img[::2, ::2]
 
