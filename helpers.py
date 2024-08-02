@@ -65,30 +65,14 @@ def correct_orientation(frame, should_flip):
     return frame
 
 def most_common_name_and_cnic(data):
-
-    data = [entry for entry in data if entry is not None]
-
     # Separate names and CNICs into their own lists
     names = [name for name, cnic in data]
     cnics = [cnic for name, cnic in data]
-
-
-    check_if_all_cnics_none = all(cnic is None for cnic in cnics)
-    check_if_all_names_none = all(name is None for name in names)
-
-    if check_if_all_cnics_none:
-        return (None, 0), (None, 0)
-
-    # remove none from cnics
-    cnics = [cnic for cnic in cnics if cnic is not None]
-
-    if not check_if_all_names_none:
-        names = [name for name in names if name is not None]
-
+    
     # Use Counter to count occurrences
     name_counter = Counter(names)
     cnic_counter = Counter(cnics)
-
+    
     # Find the most common name and CNIC
     most_common_name = name_counter.most_common(1)
     most_common_cnic = cnic_counter.most_common(1)
@@ -97,13 +81,9 @@ def most_common_name_and_cnic(data):
     return most_common_name[0] if most_common_name else (None, 0), most_common_cnic[0] if most_common_cnic else (None, 0)
 
 def get_cropped_frame(image):
-
-    x1, y1 = 51, 207
-    x2, y2 = 721, 751
     
-    image = image[y1:y2, x1:x2]
+    image = image[300:950, 400:1400]
     ROI = image
-
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # cv2.imshow('gray', gray)
@@ -125,7 +105,6 @@ def get_cropped_frame(image):
             # Crop ROI
             ROI = image[y:y+h, x:x+w]
 
-    # cv2.imshow("Frame", ROI)
     return ROI
 
 def check_if_majority_of_frame_is_white(image):
@@ -136,8 +115,6 @@ def check_if_majority_of_frame_is_white(image):
         return False
     
 def parse_data(data):
-    if data is None:
-        return []
     # Extract the text from the data
     text = [entry[1][0] for entry in data]
 
@@ -155,12 +132,6 @@ def extract_all_details_str(data):
 
 
 def extract_name_and_cnic(data):
-
-    if data is None:
-        return None, None
-    
-    if len(data) == 0:
-        return None, None
     
     name = None
     cnic = None
@@ -247,7 +218,7 @@ def save_cnic_image(image, filename='image.jpg'):
     if not os.path.exists(config('CNIC_SAVE_PATH')):
         os.makedirs(config('CNIC_SAVE_PATH'))
     
-    cv2.imwrite(f"{config('CNIC_SAVE_PATH')}/{filename}", image)
+    cv2.imwrite(f'{config('CNIC_SAVE_PATH')}/{filename}', image)
     print(f"Image saved as {filename}.")
 
 import psycopg2
@@ -336,23 +307,3 @@ def add_data_to_database(name_and_cnic, all_info):
     conn.close()
 
     print(f"Data added to database: {name_and_cnic}")
-
-
-def get_center_frame(frame):
-    # get 50x50 pixel from the center of the frame
-    # using current dimensions
-    height, width = frame.shape[:2]
-    x1 = width // 2 - 25
-    x2 = width // 2 + 25
-    y1 = height // 2 - 25
-    y2 = height // 2 + 25
-    return frame[y1:y2, x1:x2]
-
-def check_if_card_in_frame(frame):
-
-    frame = get_center_frame(frame)
-    
-    if np.mean(frame) > 150:
-        return False
-    
-    return True

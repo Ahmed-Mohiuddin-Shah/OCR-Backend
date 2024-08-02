@@ -8,6 +8,7 @@ import cv2
 import numpy as np
 from psycopg2 import Date
 from helpers import *
+from motion_detector import MotionDetection
 from decouple import config
 
 
@@ -16,7 +17,7 @@ import logging
 logger = get_logger()
 logger.setLevel(logging.ERROR)
 
-cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
+cap = cv2.VideoCapture(config("VIDEO_SOURCE"))
 print("Video source set" if cap.isOpened() else "Video source not set")
 
 # # Remove the existing model weights if they exist
@@ -31,6 +32,8 @@ except Exception as e:
     print(f"An error occurred: {e}")
 
 print("OCR initialized")
+
+md = MotionDetection()
 
 global info
 info = []
@@ -61,39 +64,18 @@ while True:
     if frame is None:
         print("Frame is None")
         print("Reconnecting to camera")
-        cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
+        cap = cv2.VideoCapture(config("VIDEO_SOURCE"))
         print("Connected", "system started at: ", count)
         continue
+
+    # if md.detect_motion(frame):
+    #     print("Motion detected")
+    #     continue
 
     cropped_frame = get_cropped_frame(frame)
 
     if cropped_frame is None:
         continue
-
-
-    card_in_frame = check_if_card_in_frame(cropped_frame)
-    
-    if not card_already_in_holder:
-        if not card_in_frame:
-            print("Card not in holder")
-            continue
-    elif card_in_frame:
-        print("Card already in holder")
-        continue
-
-    for _ in range(3):
-        ret, frame = cap.read()
-        if frame is None:
-            print("Frame is None")
-            print("Reconnecting to camera")
-            cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
-            print("Connected")
-            continue
-    
-    cropped_frame = get_cropped_frame(frame)
-
-    frame_list = []
-    number_of_frames = 1
     current_info = do_OCR_on_cropped_frame(ocr, cropped_frame)
 
     img_counter = 0
@@ -125,13 +107,34 @@ while True:
     start_time = time.time()
     db_start_insert_time = 0
     print("card entered", name_and_cnic, "at: ", start_time)
-    name_and_cnic = extract_name_and_cnic(parse_data(current_info))
-    img_counter += 1
-    if name_and_cnic[1] is not None and img_counter == number_of_frames:
-        all_info = current_info
-        save_image = cropped_frame
-    print(name_and_cnic)
-    info.append(name_and_cnic)
+
+    frame_list = []
+    for _ in range(5):
+        ret, frame = cap.read()
+        if frame is None:
+            print("Frame is None")
+            print("Reconnecting to camera")
+            cap = cv2.VideoCapture(config("VIDEO_SOURCE"))
+            print("Connected")
+            continue
+        frame_list.append(frame)
+        
+    should_flip = is_upside_down(ocr, get_cropped_frame(frame_list[4]))
+    for frame in frame_list:
+        frame = get_cropped_frame(frame)
+        corect_orientation_frame = correct_orientation(frame, should_flip)
+        # cv2.imshow('frame', corect_orientation_frame)
+        current_info = do_OCR_on_cropped_frame(ocr, corect_orientation_frame)
+        if current_info is None:
+            continue
+        name_and_cnic = extract_name_and_cnic(parse_data(current_info))
+        # print(name_and_cnic)
+        img_counter += 1
+        if name_and_cnic[1] is not None and img_counter == 5:
+            all_info = current_info
+            save_image = corect_orientation_frame
+        print(name_and_cnic)
+        info.append(name_and_cnic)
     
     frame_list = []
 
