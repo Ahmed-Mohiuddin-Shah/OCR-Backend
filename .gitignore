@@ -18,3 +18,5 @@ __pycache__
 .vscode
 
 *.log
+
+detections_with_bbox.csv
