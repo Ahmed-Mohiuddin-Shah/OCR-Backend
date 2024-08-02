@@ -8,7 +8,6 @@ import cv2
 import numpy as np
 from psycopg2 import Date
 from helpers import *
-from motion_detector import MotionDetection
 from decouple import config
 
 

@@ -65,6 +65,9 @@ def correct_orientation(frame, should_flip):
     return frame
 
 def most_common_name_and_cnic(data):
+
+    data = [entry for entry in data if entry is not None]
+
     # Separate names and CNICs into their own lists
     names = [name for name, cnic in data]
     cnics = [cnic for name, cnic in data]
@@ -133,6 +136,8 @@ def check_if_majority_of_frame_is_white(image):
         return False
     
 def parse_data(data):
+    if data is None:
+        return []
     # Extract the text from the data
     text = [entry[1][0] for entry in data]
 
@@ -150,6 +155,12 @@ def extract_all_details_str(data):
 
 
 def extract_name_and_cnic(data):
+
+    if data is None:
+        return None, None
+    
+    if len(data) == 0:
+        return None, None
     
     name = None
     cnic = None
