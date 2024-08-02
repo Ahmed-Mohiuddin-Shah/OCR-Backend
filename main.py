@@ -33,8 +33,6 @@ except Exception as e:
 
 print("OCR initialized")
 
-md = MotionDetection()
-
 global info
 info = []
 infos = []
@@ -67,10 +65,6 @@ while True:
         cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
         print("Connected", "system started at: ", count)
         continue
-
-    # if md.detect_motion(frame):
-    #     print("Motion detected")
-    #     continue
 
     cropped_frame = get_cropped_frame(frame)
 
@@ -132,55 +126,10 @@ while True:
     start_time = time.time()
     db_start_insert_time = 0
     print("card entered", name_and_cnic, "at: ", start_time)
-
-    # this is dev branch
-
-    # for _ in range(2):
-    #     ret, frame = cap.read()
-    #     if frame is None:
-    #         print("Frame is None")
-    #         print("Reconnecting to camera")
-    #         cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
-    #         print("Connected")
-    #         continue
-    # for _ in range(number_of_frames):
-    #     ret, frame = cap.read()
-    #     if frame is None:
-    #         print("Frame is None")
-    #         print("Reconnecting to camera")
-    #         cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
-    #         print("Connected")
-    #         continue
-    #     frame_list.append(frame)
-        
-    # should_flip = is_upside_down(ocr, get_cropped_frame(frame_list[0]))
-    # print("Should flip: ", should_flip)
-    # for frame in frame_list:
-        # frame = get_cropped_frame(frame)
-        # corect_orientation_frame = correct_orientation(frame, should_flip)
-        # cv2.imshow('frame', corect_orientation_frame)
-        # current_info = do_OCR_on_cropped_frame(ocr, corect_orientation_frame)
-        # if current_info is None:
-            # continue
     name_and_cnic = extract_name_and_cnic(parse_data(current_info))
-        # print(name_and_cnic)
     img_counter += 1
     if name_and_cnic[1] is not None and img_counter == number_of_frames:
         all_info = current_info
-        # for _ in range(2):
-        #     ret, frame = cap.read()
-        #     if frame is None:
-        #         print("Frame is None")
-        #         print("Reconnecting to camera")
-        #         cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
-        #         print("Connected")
-        # ret, frame = cap.read()
-        # if frame is None:
-        #     print("Frame is None")
-        #     print("Reconnecting to camera")
-        #     cap =cv2.VideoCapture(config("VIDEO_SOURCE"))
-        #     print("Connected")
-        # cropped_frame = get_cropped_frame(frame)
         save_image = cropped_frame
     print(name_and_cnic)
     info.append(name_and_cnic)
