@@ -218,7 +218,7 @@ def save_cnic_image(image, filename='image.jpg'):
     if not os.path.exists(config('CNIC_SAVE_PATH')):
         os.makedirs(config('CNIC_SAVE_PATH'))
     
-    cv2.imwrite(f'{config('CNIC_SAVE_PATH')}/{filename}', image)
+    cv2.imwrite(f"{config('CNIC_SAVE_PATH')}/{filename}", image)
     print(f"Image saved as {filename}.")
 
 import psycopg2
