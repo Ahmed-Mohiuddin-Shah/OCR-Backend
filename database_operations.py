@@ -80,7 +80,7 @@ async def add_data_to_database(name_and_cnic, all_info, camera_id):
 
     print(f"Data added to database: {name_and_cnic}, {new_timestamp.timestamp}")
 
-async def get_config():
+async def get_db_config():
     db = await anext(get_db())
 
     config = {}
@@ -97,6 +97,7 @@ async def get_config():
                     "id": camera.id,
                     "name": camera.name,
                     "type": cam_type.type,
+                    "cam_url": camera.cam_url,
                     "crop": camera.crop,
                 })
     

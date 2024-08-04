@@ -8,6 +8,22 @@ import numpy as np
 from helpers import *
 from decouple import config
 
+def crop_frame(frame, start_x, start_y, width, height):
+    """
+    Crop the given frame using the specified dimensions.
+    
+    Args:
+    - frame: The input frame.
+    - start_x: The starting x-coordinate of the crop.
+    - start_y: The starting y-coordinate of the crop.
+    - width: The width of the crop.
+    - height: The height of the crop.
+    
+    Returns:
+    - The cropped frame.
+    """
+    return frame[start_y:start_y + height, start_x:start_x + width]
+
 def do_OCR_on_cropped_frame(ocr, frame):
 
     result = ocr.ocr(frame, cls=True)
@@ -321,10 +337,17 @@ def get_center_frame(frame):
 def check_if_card_in_frame(frame):
 
     frame = get_center_frame(frame)
-    # frame = frame[470:558, 119:197]
     print("mean: ", np.mean(frame))
     
     if np.mean(frame) > 150:
         return False
     
     return True
+
+def process_batch_ocr_results(ocr_results):
+    print(len(ocr_results))
+    boxes = ocr_results[0]
+    texts = ocr_results[1]
+    giberish = ocr_results[2]
+
+    return boxes, texts, giberish
