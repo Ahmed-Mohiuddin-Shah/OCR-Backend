@@ -18,6 +18,8 @@ opencv-python = "^4.10.0.84"
 paddleocr = "^2.8.0"
 numpy = "^1.26.4"
 paddlepaddle-gpu = "2.6.1"
+sqlalchemy = "^2.0.31"
+pydantic = "^2.8.2"
 
 
 [build-system]
