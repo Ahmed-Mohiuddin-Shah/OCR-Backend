@@ -1,3 +1,5 @@
+from database.cruds.cam_type import get_cam_types
+from database.cruds.camera import get_cameras
 from database.cruds.timestamp import create_timestamp
 from database.cruds.cnic import check_if_cnic_exists, update_cnic, create_cnic
 from database.utils.database import get_db
@@ -77,3 +79,27 @@ async def add_data_to_database(name_and_cnic, all_info, camera_id):
     new_timestamp = create_timestamp(db, timestamp)
 
     print(f"Data added to database: {name_and_cnic}, {new_timestamp.timestamp}")
+
+async def get_config():
+    db = await anext(get_db())
+
+    config = {}
+
+    cameras = get_cameras(db)
+    types = get_cam_types(db)
+
+    db_cameras = []
+
+    for camera in cameras:
+        for cam_type in types:
+            if camera.type == cam_type.type:
+                db_cameras.append({
+                    "id": camera.id,
+                    "name": camera.name,
+                    "type": cam_type.type,
+                    "crop": camera.crop,
+                })
+    
+    config["cameras"] = db_cameras
+
+    return config
