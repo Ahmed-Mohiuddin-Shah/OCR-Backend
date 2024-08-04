@@ -18,3 +18,14 @@ def get_cnic_by_id(db: Session, cnic_id: int):
 
 def get_total_cnics_count(db: Session):
     return db.query(Cnic).count()
+
+def check_if_cnic_exists(db: Session, cnic: str):
+    return db.query(Cnic).filter(Cnic.cnic == cnic).first()
+
+def update_cnic(db: Session, cnic: CnicCreate):
+    db_cnic = db.query(Cnic).filter(Cnic.cnic == cnic.cnic).first()
+    db_cnic.update(cnic.model_dump())
+    db.commit()
+    db.refresh(db_cnic)
+
+    return db_cnic
