@@ -118,12 +118,10 @@ def save_cnic_image(image, filename='image.jpg'):
     print(f"Image saved as {filename}.")
 
 def extract_card_details(data):
-    
+    # convert all text part into a string
     card_details_str = ""
-
-    for entry in data:
-        print(entry)
-        card_details_str += str(entry) + ","
+    for text, _ in data:
+        card_details_str += text + ","
 
     return card_details_str
 
