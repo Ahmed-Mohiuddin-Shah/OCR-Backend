@@ -7,7 +7,6 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-psycopg2 = "^2.9.9"
 python-decouple = "^3.8"
 requests = "^2.32.3"
 shapely = "^2.0.4"
@@ -20,6 +19,7 @@ numpy = "^1.26.4"
 paddlepaddle-gpu = "2.6.1"
 sqlalchemy = "^2.0.31"
 pydantic = "^2.8.2"
+psycopg2-binary = "2.9.9"
 
 
 [build-system]
