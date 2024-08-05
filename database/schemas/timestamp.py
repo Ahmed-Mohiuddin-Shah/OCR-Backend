@@ -1,9 +1,12 @@
 from pydantic import BaseModel
+from datetime import datetime
 from typing import Optional
+
+from sqlalchemy import DateTime
 
 class TimestampBase(BaseModel):
     cnic: str
-    timestamp: float
+    timestamp: datetime
     cam_id: int
 
 class TimestampCreate(TimestampBase):

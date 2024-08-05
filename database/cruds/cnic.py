@@ -24,7 +24,10 @@ def check_if_cnic_exists(db: Session, cnic: str):
 
 def update_cnic(db: Session, cnic: CnicCreate):
     db_cnic = db.query(Cnic).filter(Cnic.cnic == cnic.cnic).first()
-    db_cnic.update(cnic.model_dump())
+    db_cnic.name = cnic.name
+    db_cnic.name_confidence = cnic.name_confidence
+    db_cnic.all_details = cnic.all_details
+    db_cnic.cnic_img_path = cnic.cnic_img_path
     db.commit()
     db.refresh(db_cnic)
 

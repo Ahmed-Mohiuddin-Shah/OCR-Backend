@@ -119,10 +119,16 @@ def save_cnic_image(image, filename='image.jpg'):
 
 def extract_card_details(data):
     card_details = []
+    if len(data) == 1:
+        return str(data)
+    
     for item in data:
         detail = item[0]
         card_details.append(detail)
-    return card_details
+    
+    card_details_str = ','.join(card_details)
+
+    return card_details_str
 
 def get_center_frame(frame):
     # get 50x50 pixel from the center of the frame
@@ -137,7 +143,7 @@ def get_center_frame(frame):
 def check_if_card_in_frame(frame):
 
     frame = get_center_frame(frame)
-    print("mean: ", np.mean(frame))
+    # print("mean: ", np.mean(frame))
     
     if np.mean(frame) > 150:
         return False
@@ -145,7 +151,6 @@ def check_if_card_in_frame(frame):
     return True
 
 def process_batch_ocr_results(ocr_results):
-    print(len(ocr_results))
     boxes = ocr_results[0]
     texts = ocr_results[1]
     giberish = ocr_results[2]
@@ -164,3 +169,12 @@ def update_mp_list_object_from_cam_id(cam_id, mp_list, key, new_data):
             item[key] = new_data
             return
     return None
+
+def resize_to_largest(images):
+    # Determine the largest dimensions
+    max_height = max(image.shape[0] for image in images)
+    max_width = max(image.shape[1] for image in images)
+    
+    # Resize all images to the largest dimensions
+    resized_images = [cv2.resize(image, (max_width, max_height)) for image in images]
+    return resized_images
