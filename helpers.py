@@ -148,34 +148,42 @@ def extract_all_details_str(data):
 
 
 def extract_name_and_cnic(data):
+
+    print(data)
     
     name = None
+    n_confidence = 0
     cnic = None
+    c_confidence = 0
     
     # name_identifiers = ['name']
     cnic_pattern = re.compile(r'\b\d{5}-\d{7}-\d{1}\b')
     
-    for i, text in enumerate(data):
+    for i, entry in enumerate(data):
+        # print(entry)
+        text, confidence = entry
         # Check for name
         if text.lower() == 'name' or text.lower() == 'name:' or text.lower() == 'name;' or text.lower() == 'name,':
             # Assuming the actual name follows the identifier
             if i + 1 < len(data):
                 if data[i + 1] == ':':
-                    name = data[i + 2]
+                    name, n_confidence = data[i + 2]
                 if data[i + 1] == ';':
-                    name = data[i + 2]
+                    name, n_confidence = data[i + 2]
                 if data[i + 1] == ',':
-                    name = data[i + 2]
+                    name, n_confidence = data[i + 2]
                 else:
-                    name = data[i + 1]
+                    name, n_confidence = data[i + 1]
         
         # Check for CNIC using the pattern
         if cnic_pattern.match(text):
             cnic = text
+            c_confidence = confidence
             if len(cnic) > 15:
                 cnic = cnic[:15]
+                c_confidence = confidence
     
-    return name, cnic
+    return name, n_confidence, cnic, c_confidence
 
 def is_majority_whitish(image, threshold=0.7):
     
