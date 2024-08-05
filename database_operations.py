@@ -18,7 +18,7 @@ async def add_data_to_database(name, n_confidence, cnic, c_confidence, all_info,
 
     name = "Unknown" if name is None else name
     n_confidence = n_confidence if name != "Unknown" else 0
-    print(extract_card_details(all_info))
+    print(str(all_info))
 
     if c_confidence < 0.8:
         print("CNIC Confidence level is below threshold")
@@ -44,7 +44,7 @@ async def add_data_to_database(name, n_confidence, cnic, c_confidence, all_info,
                 cnic=cnic,
                 name=name,
                 name_confidence=n_confidence,
-                all_details=extract_card_details(all_info),
+                all_details=str(all_info),
                 cnic_img_path=cnic_img_path
             )
             
@@ -60,7 +60,7 @@ async def add_data_to_database(name, n_confidence, cnic, c_confidence, all_info,
             cnic=cnic,
             name=name,
             name_confidence=n_confidence,
-            all_details=extract_card_details(all_info),
+            all_details=str(all_info),
             cnic_img_path=cnic_img_path
         )
 
