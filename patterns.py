@@ -4,6 +4,9 @@ import time
 import cv2
 import multiprocessing as mp
 
+import sys
+import signal
+
 from PaddleOCR.tools.infer.predict_system import TextSystem
 
 from helpers import check_if_card_in_frame, crop_frame, get_cropped_frame, process_batch_ocr_results, extract_name_and_cnic, get_mp_list_object_from_cam_id, update_mp_list_object_from_cam_id, extract_card_details, save_cnic_image, resize_to_largest
@@ -221,6 +224,16 @@ def run_ocr(args, frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
             frames.append(queue_entry["frame"])
             # print("Frame added to frames list")
 
+
+def signal_handler(sig, frame, processes):
+    print("Signal received, terminating processes...")
+    for process in processes:
+        process.terminate()
+    for process in processes:
+        process.join()
+    print("All processes terminated")
+    sys.exit(0)
+
 def run_system(cams: list, frame_queue: mp.Queue, ocr_results_queue:mp.Queue, args, previously_saved_cnic: mp.Manager, card_already_in_holder: mp.Manager):
     processes = []
 
@@ -254,6 +267,8 @@ def run_system(cams: list, frame_queue: mp.Queue, ocr_results_queue:mp.Queue, ar
     )
     pocr_post.start()
     processes.append(pocr_post)
+
+    signal.signal(signal.SIGINT, lambda sig, frame: signal_handler(sig, frame, processes))
 
     for p in processes:
         p.join()
