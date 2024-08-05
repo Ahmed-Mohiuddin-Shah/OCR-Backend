@@ -56,13 +56,13 @@ def pre_detection_pattern_for_cnic(camera_id: int, cam_url:str, crop: str, cam_t
         # auto crop
         # cropped_frame = get_cropped_frame(cropped_frame)
 
-        if cropped_frame is None:
-            continue
-        cv2.imshow(str(camera_id), cropped_frame)
+        # if cropped_frame is None:
+        #     continue
+        # cv2.imshow(str(camera_id), cropped_frame)
 
-        # wait 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        # # wait 
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
+        #     break
 
         is_card_in_frame = check_if_card_in_frame(cropped_frame)
 
