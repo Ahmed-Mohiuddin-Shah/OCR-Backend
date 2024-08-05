@@ -82,6 +82,13 @@ def pre_detection_pattern_for_cnic(camera_id: int, cam_url:str, crop: str, cam_t
                 cap =cv2.VideoCapture(cam_url)
                 print("Connected")
                 continue
+
+        if frame is None:
+            print("Frame is None")
+            print("Reconnecting to camera")
+            cap =cv2.VideoCapture(cam_url)
+            print("Connected")
+            continue
         
         cropped_frame = crop_frame(frame, startX, startY, width, height)
         # cropped_frame = get_cropped_frame(cropped_frame)

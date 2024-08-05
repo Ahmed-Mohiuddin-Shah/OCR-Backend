@@ -122,7 +122,8 @@ def extract_card_details(data):
     card_details_str = ""
 
     for entry in data:
-        card_details_str += entry + ","
+        print(entry)
+        card_details_str += str(entry) + ","
 
     return card_details_str
 
