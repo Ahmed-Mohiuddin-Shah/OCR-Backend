@@ -54,8 +54,15 @@ def pre_detection_pattern_for_cnic(camera_id: int, cam_url:str, crop: str, cam_t
         # db crop
         cropped_frame = crop_frame(frame, startX, startY, width, height)
         # auto crop
-        cropped_frame = get_cropped_frame(cropped_frame)
+        # cropped_frame = get_cropped_frame(cropped_frame)
 
+        if cropped_frame is None:
+            continue
+        cv2.imshow(str(camera_id), cropped_frame)
+
+        # wait 
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
         is_card_in_frame = check_if_card_in_frame(cropped_frame)
 
@@ -77,15 +84,8 @@ def pre_detection_pattern_for_cnic(camera_id: int, cam_url:str, crop: str, cam_t
                 continue
         
         cropped_frame = crop_frame(frame, startX, startY, width, height)
-        cropped_frame = get_cropped_frame(cropped_frame)
+        # cropped_frame = get_cropped_frame(cropped_frame)
 
-        if cropped_frame is None:
-            continue
-        cv2.imshow(str(camera_id), cropped_frame)
-
-        # wait 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
 
         queue_obj = {
             "camera_id": camera_id,
@@ -164,7 +164,7 @@ def post_detection_loop(ocr_results_queue: mp.Queue, previously_saved_cnic: mp.M
         type = result["cam_type"]
 
         if type == "cnic":
-            print("Post detection pattern for CNIC")
+            print("Post detection pattern for CNIC", result["camera_id"])
             post_detection_pattern_for_cnic(result, previously_saved_cnic, card_already_in_holder)
         else:
             continue
