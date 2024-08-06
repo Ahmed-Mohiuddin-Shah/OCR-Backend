@@ -149,5 +149,5 @@ def get_repeated_visitors_cnic(db: Session):
 
     return repeat_visitors
 
-def check_if_card_entered_in_last(db: Session, minutes: int, cnic: str):
-    return db.query(Timestamp).filter(Timestamp.timestamp >= (datetime.datetime.now() - datetime.timedelta(minutes=minutes)).strftime("%Y-%m-%d %H:%M:%S"), Timestamp.cnic == cnic).count() > 0
+def check_if_card_entered_in_last(db: Session, seconds: int, cnic: str):
+    return db.query(Timestamp).filter(Timestamp.timestamp >= (datetime.datetime.now() - datetime.timedelta(seconds=seconds)).strftime("%Y-%m-%d %H:%M:%S"), Timestamp.cnic == cnic).count() > 0
