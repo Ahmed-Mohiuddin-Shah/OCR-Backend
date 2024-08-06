@@ -258,7 +258,11 @@ def run_ocr(frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
 
     detections = []
 
-    ts = TextSystem(args)
+    try:
+        ts = TextSystem(args)
+    except Exception as e:
+        print("Error initializing OCR model: ", e)
+        sys.exit(1)
 
     while True:
 
