@@ -6,8 +6,6 @@ from database.utils.database import get_db
 
 from database.schemas.cnic import CnicCreate
 from database.schemas.timestamp import TimestampCreate
-
-from helpers import extract_card_details
 from decouple import config
 
 import datetime
