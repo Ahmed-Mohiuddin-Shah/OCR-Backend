@@ -17,7 +17,7 @@ async def main():
     # args.cls_model_dir = './cls_model'
     args.rec_char_dict_path = './PaddleOCR/ppocr/utils/en_dict.txt'
     args.use_space_char = True
-    args.use_gpu = False
+    args.use_gpu = True
 
     frame_queue = mp.Queue()
     ocr_results_queue = mp.Queue()
