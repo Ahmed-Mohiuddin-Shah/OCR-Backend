@@ -148,3 +148,6 @@ def get_repeated_visitors_cnic(db: Session):
     # TODO Top 5 CNICs with most repeat visits
 
     return repeat_visitors
+
+def check_if_card_entered_in_last(db: Session, minutes: int, cnic: str):
+    return db.query(Timestamp).filter(Timestamp.timestamp >= (datetime.datetime.now() - datetime.timedelta(minutes=minutes)).strftime("%Y-%m-%d %H:%M:%S"), Timestamp.cnic == cnic).count() > 0
