@@ -1201,8 +1201,8 @@ protobuf = [
 ]
 
 [package.source]
-type = "file"
-url = "packages/paddlepaddle_gpu-2.6.1.post116-cp310-cp310-linux_x86_64.whl"
+type = "url"
+url = "https://paddle-wheel.bj.bcebos.com/2.6.1/linux/linux-gpu-cuda11.6-cudnn8.4.0-mkl-gcc8.2-avx/paddlepaddle_gpu-2.6.1.post116-cp310-cp310-linux_x86_64.whl"
 
 [[package]]
 name = "pillow"
@@ -2197,4 +2197,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "741f06a2cba0629af73111704bbe21645042a967f29f06f0b14366220d16b16a"
+content-hash = "fa27bc38a2e90043bcdd8cdf3e841b32ac1a75018a1ebcd13c612b917c814690"
