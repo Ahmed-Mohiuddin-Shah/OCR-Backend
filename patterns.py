@@ -10,6 +10,7 @@ import sys
 import signal
 
 from PaddleOCR.tools.infer.predict_system import TextSystem
+from PaddleOCR.tools.infer import utility
 
 from helpers import (
     check_if_card_in_frame,
@@ -238,9 +239,17 @@ def post_detection_loop(
         else:
             continue
 
-def run_ocr(args, frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
+def run_ocr(frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+    args = utility.parse_args()
+
+    # args.use_angle_cls = True
+    args.det_model_dir = "./det_model"
+    args.rec_model_dir = "./rec_model"
+    # args.cls_model_dir = './cls_model'
+    args.rec_char_dict_path = "./PaddleOCR/ppocr/utils/en_dict.txt"
+    args.use_space_char = True
+    args.use_gpu = True
 
     frames = []
     timestamps = []
@@ -302,7 +311,6 @@ def run_system(
     cams: list,
     frame_queue: mp.Queue,
     ocr_results_queue: mp.Queue,
-    args,
     previously_saved_cnic: mp.Manager,
     card_already_in_holder: mp.Manager,
 ):
@@ -327,7 +335,7 @@ def run_system(
         p.start()
         processes.append(p)
 
-    pocr = mp.Process(target=run_ocr, args=(args, frame_queue, ocr_results_queue))
+    pocr = mp.Process(target=run_ocr, args=(frame_queue, ocr_results_queue))
     pocr.start()
     processes.append(pocr)
 
