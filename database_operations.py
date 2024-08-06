@@ -1,6 +1,6 @@
 from database.cruds.cam_type import get_cam_types
 from database.cruds.camera import get_cameras
-from database.cruds.timestamp import create_timestamp
+from database.cruds.timestamp import create_timestamp, check_if_card_entered_in_last
 from database.cruds.cnic import check_if_cnic_exists, update_cnic, create_cnic
 from database.utils.database import get_db
 
@@ -29,6 +29,10 @@ async def add_data_to_database(name, n_confidence, cnic, c_confidence, all_info,
         return
 
     db_cnic = check_if_cnic_exists(db, cnic)
+
+    if check_if_card_entered_in_last(db, 1, cnic):
+        print(f"Card already entered in last 1 minutes: {cnic}")
+        return
 
     if db_cnic is not None:
         print(f"Cnic already exists in database: {cnic}")
