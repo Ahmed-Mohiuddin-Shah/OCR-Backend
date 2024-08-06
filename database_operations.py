@@ -8,6 +8,7 @@ from database.schemas.cnic import CnicCreate
 from database.schemas.timestamp import TimestampCreate
 
 from helpers import extract_card_details
+from decouple import config
 
 import datetime
 
@@ -30,8 +31,8 @@ async def add_data_to_database(name, n_confidence, cnic, c_confidence, all_info,
 
     db_cnic = check_if_cnic_exists(db, cnic)
 
-    if check_if_card_entered_in_last(db, 1, cnic):
-        print(f"Card already entered in last 1 minutes: {cnic}")
+    if check_if_card_entered_in_last(db, config('CARD_REPEATED_THRESHOLD_MINUTES'), cnic):
+        print(f"Card already entered in last {config('CARD_REPEATED_THRESHOLD_MINUTES')} minutes: {cnic}")
         return
 
     if db_cnic is not None:
