@@ -23,7 +23,6 @@ from helpers import (
 )
 from database_operations import add_data_to_database
 
-
 def pre_detection_pattern_for_cnic(
     camera_id: int,
     cam_url: str,
@@ -128,7 +127,6 @@ def pre_detection_pattern_for_cnic(
 
         frame_queue.put(queue_obj)
 
-
 def post_detection_pattern_for_cnic(
     result: dict, previously_saved_cnic: mp.Manager, card_already_in_holder: mp.Manager
 ):
@@ -215,7 +213,6 @@ def post_detection_pattern_for_cnic(
     print("card exited", cnic, "at: ", end_time)
     print("Time taken: ", end_time - start_time)
 
-
 def post_detection_loop(
     ocr_results_queue: mp.Queue,
     previously_saved_cnic: mp.Manager,
@@ -238,7 +235,6 @@ def post_detection_loop(
             )
         else:
             continue
-
 
 def run_ocr(args, frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
 
@@ -289,7 +285,6 @@ def run_ocr(args, frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
             frames.append(queue_entry["frame"])
             # print("Frame added to frames list")
 
-
 def signal_handler(sig, frame, processes):
     print("Signal received, terminating processes...")
     for process in processes:
@@ -298,7 +293,6 @@ def signal_handler(sig, frame, processes):
         process.join()
     print("All processes terminated")
     sys.exit(0)
-
 
 def run_system(
     cams: list,
