@@ -238,6 +238,8 @@ def post_detection_loop(
 
 def run_ocr(args, frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
 
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
     frames = []
     timestamps = []
     cam_ids = []
