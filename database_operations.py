@@ -14,7 +14,6 @@ import datetime
 
 card_repeated_threshold_minutes = int(config("CARD_REPEATED_THRESHOLD_MINUTES"))
 
-
 # adds data to postgreSQL database
 async def add_data_to_database(
     name,
