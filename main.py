@@ -1,5 +1,7 @@
 import multiprocessing as mp
 
+import paddle.utils
+
 from patterns import run_system
 from database_operations import get_db_config
 
@@ -40,4 +42,5 @@ async def main():
     )
 
 if __name__ == "__main__":
+    mp.set_start_method("spawn")
     asyncio.run(main())
