@@ -10,6 +10,8 @@ from decouple import config
 
 import datetime
 
+from helpers import save_cnic_image
+
 card_repeated_threshold_minutes = int(config("CARD_REPEATED_THRESHOLD_SECONDS"))
 
 # adds data to postgreSQL database
@@ -21,6 +23,7 @@ async def add_cnic_to_database(
     all_info,
     timestamp: datetime.datetime.now,
     camera_id,
+    save_image=None,
 ):
 
     db = await anext(get_db())
@@ -31,11 +34,11 @@ async def add_cnic_to_database(
 
     if c_confidence < 0.9:
         print("CNIC Confidence level is below threshold")
-        return
+        return False
 
     if cnic is None:
         print("CNIC not found")
-        return
+        return False
 
     db_cnic = check_if_cnic_exists(db, cnic)
 
@@ -43,7 +46,7 @@ async def add_cnic_to_database(
         print(
             f"Card already entered in last {card_repeated_threshold_minutes} minutes: {cnic}"
         )
-        return
+        return False
 
     if db_cnic is not None:
         print(f"Cnic already exists in database: {cnic}")
@@ -89,9 +92,14 @@ async def add_cnic_to_database(
 
     new_timestamp = create_timestamp(db, timestamp)
 
+    if cnic is not None and save_image is not None:
+        save_cnic_image(save_image, cnic + ".jpg")
+
     print(
         f"Data added to database: {new_timestamp.cnic}, {new_timestamp.timestamp}, {new_timestamp.cam_id}"
     )
+
+    return True
 
 
 async def get_db_config():

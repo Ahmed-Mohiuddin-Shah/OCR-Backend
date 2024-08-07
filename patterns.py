@@ -177,15 +177,13 @@ def post_detection_pattern_for_cnic(
         )
         asyncio.run(
             add_cnic_to_database(
-                name, n_confidence, cnic, c_confidence, all_info, timestamp, cam_id
+                name, n_confidence, cnic, c_confidence, all_info, timestamp, cam_id, save_image
             )
         )
         update_mp_list_object_from_cam_id(cam_id, previously_saved_cnic, "cnic", cnic)
         update_mp_list_object_from_cam_id(
             cam_id, card_already_in_holder, "status", True
         )
-        if cnic is not None and save_image is not None:
-            save_cnic_image(save_image, cnic + ".jpg")
     elif (
         previously_saved_cnic_current_camera is not None
         and cnic is not None
@@ -197,15 +195,13 @@ def post_detection_pattern_for_cnic(
         )
         asyncio.run(
             add_cnic_to_database(
-                name, n_confidence, cnic, c_confidence, all_info, timestamp, cam_id
+                name, n_confidence, cnic, c_confidence, all_info, timestamp, cam_id, save_image
             )
         )
         update_mp_list_object_from_cam_id(cam_id, previously_saved_cnic, "cnic", cnic)
         update_mp_list_object_from_cam_id(
             cam_id, card_already_in_holder, "status", True
         )
-        if cnic is not None and save_image is not None:
-            save_cnic_image(save_image, cnic + ".jpg")
     else:
         print("Card was already in holder", cnic, "did not save it again")
         update_mp_list_object_from_cam_id(
