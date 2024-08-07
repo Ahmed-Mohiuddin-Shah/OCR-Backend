@@ -21,3 +21,5 @@ __pycache__
 
 detections_with_bbox.csv
 inference_results
+
+data.json

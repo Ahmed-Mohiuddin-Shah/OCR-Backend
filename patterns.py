@@ -24,7 +24,7 @@ from helpers import (
     save_cnic_image,
     resize_to_largest,
 )
-from database_operations import add_data_to_database
+from database_operations import add_cnic_to_database
 
 def pre_detection_pattern_for_cnic(
     camera_id: int,
@@ -176,7 +176,7 @@ def post_detection_pattern_for_cnic(
             cnic,
         )
         asyncio.run(
-            add_data_to_database(
+            add_cnic_to_database(
                 name, n_confidence, cnic, c_confidence, all_info, timestamp, cam_id
             )
         )
@@ -196,7 +196,7 @@ def post_detection_pattern_for_cnic(
             cnic,
         )
         asyncio.run(
-            add_data_to_database(
+            add_cnic_to_database(
                 name, n_confidence, cnic, c_confidence, all_info, timestamp, cam_id
             )
         )
