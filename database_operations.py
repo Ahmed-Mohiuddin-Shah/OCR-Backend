@@ -29,7 +29,7 @@ async def add_cnic_to_database(
     n_confidence = n_confidence if name != "Unknown" else 0
     print(str(all_info))
 
-    if c_confidence < 0.8:
+    if c_confidence < 0.9:
         print("CNIC Confidence level is below threshold")
         return
 
