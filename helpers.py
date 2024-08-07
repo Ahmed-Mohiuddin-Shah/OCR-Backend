@@ -139,10 +139,10 @@ def get_lower_right_frame(frame):
     # get 50x50 pixel from the lower right corner of the frame
     # using current dimensions
     height, width = frame.shape[:2]
-    x1 = width - 50
-    x2 = width
-    y1 = height - 50
-    y2 = height
+    x1 = width - 120
+    x2 = width - 70
+    y1 = height - 120
+    y2 = height - 70
     return frame[y1:y2, x1:x2]
 
 def check_if_card_in_frame(frame):
