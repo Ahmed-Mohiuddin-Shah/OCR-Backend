@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 from helpers import *
 from decouple import config
+from datetime import datetime
 import re
 
 # Dictionaries for character conversion
@@ -131,6 +132,15 @@ def find_best_plate(cache_list):
     best_confidence = max(plate_count[best_plate])
 
     return best_plate, best_confidence
+
+def average_timestamp(timestamps: datetime.datetime):
+    """Averages a list of timestamps."""
+    if not timestamps:
+        return None
+
+    total = sum([timestamp.timestamp() for timestamp in timestamps])
+    average = total / len(timestamps)
+    return datetime.fromtimestamp(average)
 
 def crop_frame(frame, start_x, start_y, width, height):
     """
