@@ -1,11 +1,8 @@
 import multiprocessing as mp
-
-import paddle.utils
-
-from patterns import run_system
-from database_operations import get_db_config
-
 import asyncio
+
+from patterns.patterns import run_system
+from database_operations import get_db_config
 
 async def main():
 
@@ -29,6 +26,15 @@ async def main():
         ]
     )
 
+    number_plate_detect_cache = mp.Manager().list(
+        [
+            {
+                "cam_id": -1,
+                "number_plate": []
+            }
+        ]
+    )
+
     db_config = await get_db_config()
 
     cameras = db_config["cameras"]
@@ -38,7 +44,8 @@ async def main():
         frame_queue=frame_queue, 
         ocr_results_queue=ocr_results_queue,
         previously_saved_cnic=previously_saved_cnic, 
-        card_already_in_holder=card_already_in_holder
+        card_already_in_holder=card_already_in_holder,
+        number_plate_detect_cache=number_plate_detect_cache
     )
 
 if __name__ == "__main__":
