@@ -281,9 +281,19 @@ def get_lower_right_frame(frame):
     y2 = height - 70
     return frame[y1:y2, x1:x2]
 
+def get_right_frame(frame):
+    # get 50x50 pixel from the right corner of the frame
+    # using current dimensions
+    height, width = frame.shape[:2]
+    x1 = width - 120
+    x2 = width - 70
+    y1 = height // 2 - 25
+    y2 = height // 2 + 25
+    return frame[y1:y2, x1:x2]
+
 def check_if_card_in_frame(frame):
 
-    frame = get_lower_right_frame(frame)
+    frame = get_right_frame(frame)
     # print("mean: ", np.mean(frame))
     
     if np.mean(frame) > 150:
