@@ -133,7 +133,7 @@ def find_best_plate(cache_list):
 
     return best_plate, best_confidence
 
-def average_timestamp(timestamps: datetime.datetime):
+def average_timestamp(timestamps):
     """Averages a list of timestamps."""
     if not timestamps:
         return None
