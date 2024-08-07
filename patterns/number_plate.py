@@ -1,4 +1,6 @@
 import datetime
+import json
+import os
 import time
 import cv2
 import multiprocessing as mp
@@ -6,6 +8,8 @@ import multiprocessing as mp
 from helpers import (
     get_mp_list_object_from_cam_id,
     update_mp_list_object_from_cam_id,
+    find_best_plate,
+    average_timestamp    
 )
 
 def pre_detection_pattern_for_num_plate_rfid(
@@ -52,6 +56,8 @@ def pre_detection_pattern_for_num_plate_rfid(
                 }
             )
 
+            time.sleep(0.01)
+
 def post_detection_pattern_for_num_plate_rfid(
     result: dict,
     number_plate_detect_cache,
@@ -87,5 +93,45 @@ def post_detection_pattern_for_num_plate_rfid(
             value=[],
         )
 
-        for plate in current_cache_number_plates:
-            print(plate)
+        timestamps = []
+        plates = []
+
+        for plate, _timestamp in current_cache_number_plates:
+            timestamps.append(_timestamp)
+            plates.append(plate)
+        
+        best_plate, plate_confidence = find_best_plate(plates)
+
+        avg_timestamp = average_timestamp(timestamps)
+
+        if best_plate:
+            print(
+                    f"Best plate: {best_plate} with confidence: {plate_confidence}"
+                )
+                # save to data.json
+
+                # create data.json if not exists
+            if not os.path.exists("data.json"):
+                with open("data.json", "w") as f:
+                    json.dump([], f)
+                print("data.json created.")
+
+                with open("data.json", "r") as f:
+                    data = json.load(f)
+
+                    data.append(
+                    {
+                        "plate": best_plate,
+                        "confidence": plate_confidence,
+                        "timestamp": avg_timestamp,
+                    }
+
+                    )
+
+                with open("data.json", "w") as f:
+                    json.dump(data, f, indent=4)
+                print("Appended info to data.json.")
+                
+            else:
+                print("No valid plate found")
+
