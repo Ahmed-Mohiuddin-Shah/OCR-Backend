@@ -135,9 +135,19 @@ def get_center_frame(frame):
     y2 = height // 2 + 25
     return frame[y1:y2, x1:x2]
 
+def get_lower_right_frame(frame):
+    # get 50x50 pixel from the lower right corner of the frame
+    # using current dimensions
+    height, width = frame.shape[:2]
+    x1 = width - 50
+    x2 = width
+    y1 = height - 50
+    y2 = height
+    return frame[y1:y2, x1:x2]
+
 def check_if_card_in_frame(frame):
 
-    frame = get_center_frame(frame)
+    frame = get_lower_right_frame(frame)
     # print("mean: ", np.mean(frame))
     
     if np.mean(frame) > 150:
