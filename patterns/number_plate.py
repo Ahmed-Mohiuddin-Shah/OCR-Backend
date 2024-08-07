@@ -24,7 +24,6 @@ def pre_detection_pattern_for_num_plate_rfid(
     )
 
     startX, startY, width, height = [int(i) for i in crop.split(",")]
-
     cap = cv2.VideoCapture(cam_url)
 
     print(

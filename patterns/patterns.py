@@ -161,7 +161,7 @@ def run_system(
                     card_already_in_holder,
                 ),
             )
-        elif cam["type"] == "number_plate_rfid":
+        elif cam["type"] == "num_plate_rfid":
             p = mp.Process(
                 target=pre_detection_pattern_for_num_plate_rfid,
                 args=(
