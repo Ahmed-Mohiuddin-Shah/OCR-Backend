@@ -86,17 +86,7 @@ def run_ocr(frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
             # print("Running OCR on frames")
 
             resized_frames = resize_to_largest(frames)
-
-            start_time = time.time()
             detections = ts(resized_frames)
-            end_time = time.time()
-            print(
-                "Time taken for OCR: ",
-                end_time - start_time,
-                "seconds to process ",
-                len(frames),
-                "frames",
-            )
             boxes, texts, _ = process_batch_ocr_results(detections)
 
             result_entry = {}
