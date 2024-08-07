@@ -5,6 +5,132 @@ import cv2
 import numpy as np
 from helpers import *
 from decouple import config
+import re
+
+# Dictionaries for character conversion
+dict_int_to_char = {
+    "0": "O",
+    "1": "I",
+    "3": "J",
+    "4": "A",
+    "6": "G",
+    "5": "S",
+    "8": "B",
+}
+dict_char_to_int = {
+    "O": "0",
+    "I": "1",
+    "J": "3",
+    "A": "4",
+    "G": "6",
+    "S": "5",
+    "B": "8",
+}
+
+def clean_plate(plate_name):
+    """Cleans and formats a plate name."""
+    # Remove non-English characters
+    english_characters_and_space = r"[^a-zA-Z0-9 -]"
+    plate_name = re.sub(english_characters_and_space, "", plate_name)
+    # Add hyphen if missing
+    if "-" not in plate_name:
+        plate_name = re.sub(
+            r"([a-zA-Z]+)([0-9]+)",
+            lambda match: match.group(1) + "-" + match.group(2),
+            plate_name,
+            1,
+        )
+    # Replace characters based on dictionaries
+    if "-" in plate_name:
+        parts = plate_name.split("-")
+        modified_part = "".join(
+            [
+                dict_int_to_char.get(char, char) if char.isdigit() else char
+                for char in parts[0]
+            ]
+        )
+        modified_part += "-" + "".join(
+            [
+                dict_char_to_int.get(char, char) if char.isalpha() else char
+                for char in parts[1]
+            ]
+        )
+        plate_name = modified_part
+    # Remove additional hyphens
+    plate_name = re.sub(r"-(?=[^-]*-)", "", plate_name)
+    return plate_name
+
+def find_best_plate(cache_list):
+    """Finds the most valid number plate from a cache list."""
+    plate_count = {}
+    wrong_count = {}
+
+    for entry in cache_list:
+
+        plate = ""
+        confidence = 0.0
+
+        if len(entry) == 0:
+            continue
+
+        if len(entry) >= 2:
+            plate = clean_plate(entry[0][0][0:3] + entry[1][0])
+            confidence = (entry[0][1] + entry[1][1]) / 2
+        else:
+            plate = clean_plate(entry[0][0])
+            confidence = entry[0][1]
+
+        if not plate:
+            continue
+
+        # Classify plate as valid or invalid
+        if plate[0].isalpha() and plate[0].isascii() and plate[-1].isdigit():
+            if plate in plate_count:
+                plate_count[plate].append(confidence)
+            else:
+                plate_count[plate] = [confidence]
+        else:
+            if plate in wrong_count:
+                wrong_count[plate].append(confidence)
+            else:
+                wrong_count[plate] = [confidence]
+
+    if not plate_count:
+        return None, 0.0
+
+    max_count_plates = []
+    max_confidence = -1
+    max_alphabets = -1
+
+    # Determine the best plate based on confidence and alphabetic characters
+    for plate, confidences in plate_count.items():
+        confidence_sum = sum(confidences)
+        if confidence_sum > max_confidence or (
+            confidence_sum == max_confidence
+            and sum(c.isalpha() for c in plate) > max_alphabets
+        ):
+            max_count_plates = [plate]
+            max_confidence = confidence_sum
+            max_alphabets = sum(c.isalpha() for c in plate)
+        elif (
+            confidence_sum == max_confidence
+            and sum(c.isalpha() for c in plate) == max_alphabets
+        ):
+            max_count_plates.append(plate)
+
+    # Sort plates by number of alphabetic characters, count of plates, and confidence
+    sorted_plates = sorted(
+        max_count_plates,
+        key=lambda x: (
+            -sum(c.isalpha() for c in x),
+            -len(plate_count[x]),
+            -sum(plate_count[x]),
+        ),
+    )
+    best_plate = sorted_plates[0]
+    best_confidence = max(plate_count[best_plate])
+
+    return best_plate, best_confidence
 
 def crop_frame(frame, start_x, start_y, width, height):
     """
