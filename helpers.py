@@ -8,6 +8,9 @@ from decouple import config
 from datetime import datetime
 import re
 
+# Load the car cascade
+car_cascade = cv2.CascadeClassifier("haarcascade_cars.xml")
+
 # Dictionaries for character conversion
 dict_int_to_char = {
     "0": "O",
@@ -329,3 +332,9 @@ def resize_to_largest(images):
     # Resize all images to the largest dimensions
     resized_images = [cv2.resize(image, (max_width, max_height)) for image in images]
     return resized_images
+
+def check_if_car_in_frame(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    cars = car_cascade.detectMultiScale(gray, 1.1, 1)
+    if len(cars) > 0:
+        print("Car detected!")
