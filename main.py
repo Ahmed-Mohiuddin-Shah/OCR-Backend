@@ -4,9 +4,7 @@ import asyncio
 from patterns.patterns import run_system
 from database_operations import get_db_config
 
-async def main():
-
-    
+async def main(manager=None):
 
     db_config = await get_db_config()
 
@@ -15,12 +13,11 @@ async def main():
     frame_queue = mp.Queue()
     ocr_results_queue = mp.Queue()
 
-    with mp.Manager() as manager:
-        previously_saved_cnic = manager.list()
-        card_already_in_holder = manager.list()
-        number_plate_detect_cache = manager.list()
+    previously_saved_cnic = manager.list()
+    card_already_in_holder = manager.list()
+    number_plate_detect_cache = manager.list()
 
-        run_system(
+    run_system(
         cams=cameras,
         frame_queue=frame_queue, 
         ocr_results_queue=ocr_results_queue,
@@ -31,4 +28,5 @@ async def main():
 
 if __name__ == "__main__":
     mp.set_start_method("spawn")
-    asyncio.run(main())
+    manager = mp.Manager()
+    asyncio.run(main(manager=manager))
