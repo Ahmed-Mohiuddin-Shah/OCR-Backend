@@ -4,13 +4,17 @@ import os
 import time
 import cv2
 import multiprocessing as mp
+import asyncio
 
 from helpers import (
     get_mp_list_object_from_cam_id,
     update_mp_list_object_from_cam_id,
     find_best_plate,
-    average_timestamp    
+    average_timestamp,
+    check_if_car_in_frame
 )
+
+from database_operations import add_number_plate_to_database
 
 def pre_detection_pattern_for_num_plate_rfid(
     camera_id: int,
@@ -47,6 +51,9 @@ def pre_detection_pattern_for_num_plate_rfid(
     
             frame = frame[startY : startY + height, startX : startX + width]
     
+            if not check_if_car_in_frame(frame):
+                continue
+
             frame_queue.put(
                 {
                     "camera_id": camera_id,
@@ -63,6 +70,7 @@ def post_detection_pattern_for_num_plate_rfid(
     cam_id = result["camera_id"]
     timestamp = result["timestamp"]
     number_plates = result["texts"]
+    frame = result["frame"]
 
     current_cache_number_plates = get_mp_list_object_from_cam_id(
         cam_id=cam_id, mp_list=number_plate_detect_cache
@@ -70,7 +78,7 @@ def post_detection_pattern_for_num_plate_rfid(
 
     if len(number_plates) > 0:
         current_cache_number_plates.append(
-            [number_plates, timestamp]
+            [number_plates, timestamp, frame]
         )
         print(len(number_plates), cam_id, current_cache_number_plates)
         update_mp_list_object_from_cam_id(
@@ -90,46 +98,35 @@ def post_detection_pattern_for_num_plate_rfid(
 
         timestamps = []
         plates = []
+        frames = []
 
-        for plate, _timestamp in current_cache_number_plates:
+        for plate, _timestamp, frame in current_cache_number_plates:
             timestamps.append(_timestamp)
             plates.append(plate)
+            frames.append(frame)
 
         best_plate, plate_confidence = find_best_plate(plates)
 
         avg_timestamp = average_timestamp(timestamps)
 
+        best_frame = frames[len(frames) // 2]
+
         if best_plate:
+            
+            asyncio.run(
+                add_number_plate_to_database(
+                    number_plate=best_plate,
+                    number_plate_confidence=plate_confidence,
+                    timestamp=avg_timestamp,
+                    camera_id=cam_id,
+                    save_image=best_frame,
+                )
+            )
+
             print(
                     f"Best plate: {best_plate} with confidence: {plate_confidence}"
                 )
-            # save to data.json
-
-            # create data.json if not exists
-            if not os.path.exists("data.json"):
-                with open("data.json", "w") as f:
-                    json.dump([], f)
-                print("data.json created.")
-
-                with open("data.json", "r") as f:
-                    data = json.load(f)
-
-                    data.append(
-                    {
-                        "plate": best_plate,
-                        "confidence": plate_confidence,
-                        "timestamp": avg_timestamp,
-                    }
-
-                    )
-
-                with open("data.json", "w") as f:
-                    json.dump(data, f, indent=4)
-                print("Appended info to data.json.")
-
-            else:
-                print("No valid plate found")
-
+        
         update_mp_list_object_from_cam_id(
             cam_id=cam_id,
             mp_list=number_plate_detect_cache,
