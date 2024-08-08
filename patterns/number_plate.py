@@ -66,7 +66,7 @@ def post_detection_pattern_for_num_plate_rfid(
     timestamp = result["timestamp"]
     number_plates = result["texts"]
 
-    print(number_plates)
+    # print(number_plates)
 
     current_cache_number_plates = get_mp_list_object_from_cam_id(
         cam_id=cam_id, mp_list=number_plate_detect_cache
@@ -94,6 +94,8 @@ def post_detection_pattern_for_num_plate_rfid(
             key="number_plates",
             new_data=[],
         )
+
+        print(current_cache_number_plates)
 
         timestamps = []
         plates = []
