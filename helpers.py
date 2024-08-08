@@ -331,7 +331,7 @@ def get_mp_list_object_from_cam_id(cam_id, mp_list):
 
 def update_mp_list_object_from_cam_id(cam_id, mp_list, key, new_data):
     for idx, item in enumerate(mp_list):
-        if item["camera_id"] == cam_id:
+        if item["cam_id"] == cam_id:
             updated_item = item.copy()
             updated_item[key] = new_data
             mp_list[idx] = updated_item
