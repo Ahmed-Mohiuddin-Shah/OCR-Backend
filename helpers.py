@@ -78,8 +78,12 @@ def find_best_plate(cache_list):
             continue
 
         if len(entry) >= 2:
-            plate = clean_plate(entry[0][0][0:3] + entry[1][0])
-            confidence = (entry[0][1] + entry[1][1]) / 2
+            if entry[0][0] == "ICT":
+                plate = clean_plate(entry[1][0][0:3] + entry[1][0])
+                confidence = (entry[0][1] + entry[1][1]) / 2
+            else:
+                plate = clean_plate(entry[0][0][0:3] + entry[1][0])
+                confidence = (entry[0][1] + entry[1][1]) / 2
         else:
             plate = clean_plate(entry[0][0])
             confidence = entry[0][1]
