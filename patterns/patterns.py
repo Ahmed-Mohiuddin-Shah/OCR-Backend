@@ -42,6 +42,7 @@ def post_detection_loop(
         result = ocr_results_queue.get()
 
         type = result["cam_type"]
+        print(type)
 
         if type == "cnic":
             print("Post detection pattern for CNIC", result["camera_id"])
