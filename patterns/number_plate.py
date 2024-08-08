@@ -78,7 +78,7 @@ def post_detection_pattern_for_num_plate_rfid(
             cam_id=cam_id,
             mp_list=number_plate_detect_cache,
             key="number_plates",
-            value=current_cache_number_plates,
+            new_data=current_cache_number_plates,
         )
     else:
 
@@ -90,7 +90,7 @@ def post_detection_pattern_for_num_plate_rfid(
             cam_id=cam_id,
             mp_list=number_plate_detect_cache,
             key="number_plates",
-            value=[],
+            new_data=[],
         )
 
         timestamps = []
