@@ -50,7 +50,7 @@ def post_detection_loop(
                 result, previously_saved_cnic, card_already_in_holder
             )
         elif type == "num_plate_rfid":
-            print("Post detection pattern for Number Plate", result["camera_id"])
+            # print("Post detection pattern for Number Plate", result["camera_id"])
             post_detection_pattern_for_num_plate_rfid(result, number_plate_detect_cache)
         else:
             continue
