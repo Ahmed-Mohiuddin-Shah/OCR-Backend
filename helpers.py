@@ -256,6 +256,13 @@ def save_cnic_image(image, filename='image.jpg'):
     cv2.imwrite(f"{config('CNIC_SAVE_PATH')}/{filename}", image)
     print(f"Image saved as {filename}.")
 
+def save_plate_image(image, filename='image.jpg'):
+    if not os.path.exists(config('PLATE_SAVE_PATH')):
+        os.makedirs(config('PLATE_SAVE_PATH'))
+    
+    cv2.imwrite(f"{config('PLATE_SAVE_PATH')}/{filename}", image)
+    print(f"Image saved as {filename}.")
+
 def extract_card_details(data):
     # convert all text part into a string
     card_details_str = ""
