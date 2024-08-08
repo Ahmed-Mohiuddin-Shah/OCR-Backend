@@ -42,14 +42,14 @@ def post_detection_loop(
         result = ocr_results_queue.get()
 
         type = result["cam_type"]
-        print(type)
+        # print(type)
 
         if type == "cnic":
             print("Post detection pattern for CNIC", result["camera_id"])
             post_detection_pattern_for_cnic(
                 result, previously_saved_cnic, card_already_in_holder
             )
-        elif type == "number_plate_rfid":
+        elif type == "num_plate_rfid":
             print("Post detection pattern for Number Plate", result["camera_id"])
             post_detection_pattern_for_num_plate_rfid(result, number_plate_detect_cache)
         else:
