@@ -77,13 +77,11 @@ def post_detection_pattern_for_num_plate_rfid(
     )["number_plates"]
 
     if len(number_plates) > 0:
-        print("before: ", len(current_cache_number_plates), cam_id, current_cache_number_plates)
-        # new_entry = (number_plates, timestamp, frame)
-        new_entry = (number_plates, timestamp)
+        new_entry = (number_plates, timestamp, frame)
+        # new_entry = (number_plates, timestamp)
         current_cache_number_plates.append(
             new_entry
         )
-        print("after: ", len(current_cache_number_plates), cam_id, current_cache_number_plates)
         update_mp_list_object_from_cam_id(
             cam_id=cam_id,
             mp_list=number_plate_detect_cache,
@@ -92,49 +90,49 @@ def post_detection_pattern_for_num_plate_rfid(
         )
         return
 
-    # if len(number_plates) == 0:
-    #     current_cache_number_plates = get_mp_list_object_from_cam_id(
-    #         cam_id=cam_id, mp_list=number_plate_detect_cache
-    #     )["number_plates"]
+    if len(number_plates) == 0:
+        current_cache_number_plates = get_mp_list_object_from_cam_id(
+            cam_id=cam_id, mp_list=number_plate_detect_cache
+        )["number_plates"]
 
-    #     print(current_cache_number_plates)
+        print(current_cache_number_plates)
 
-    #     timestamps = []
-    #     plates = []
-    #     frames = []
+        timestamps = []
+        plates = []
+        frames = []
 
-    #     for plate, _timestamp, frame in current_cache_number_plates:
-    #         timestamps.append(_timestamp)
-    #         plates.append(plate)
-    #         frames.append(frame)
+        for plate, _timestamp, frame in current_cache_number_plates:
+            timestamps.append(_timestamp)
+            plates.append(plate)
+            frames.append(frame)
 
-    #     best_plate, plate_confidence = find_best_plate(plates)
+        best_plate, plate_confidence = find_best_plate(plates)
 
-    #     avg_timestamp = average_timestamp(timestamps)
+        avg_timestamp = average_timestamp(timestamps)
 
-    #     best_frame = frames[len(frames) // 2]
+        best_frame = frames[len(frames) // 2]
 
-    #     if best_plate:
+        if best_plate:
             
-    #         asyncio.run(
-    #             add_number_plate_to_database(
-    #                 number_plate=best_plate,
-    #                 number_plate_confidence=plate_confidence,
-    #                 timestamp=avg_timestamp,
-    #                 camera_id=cam_id,
-    #                 save_image=best_frame,
-    #             )
-    #         )
+            asyncio.run(
+                add_number_plate_to_database(
+                    number_plate=best_plate,
+                    number_plate_confidence=plate_confidence,
+                    timestamp=avg_timestamp,
+                    camera_id=cam_id,
+                    save_image=best_frame,
+                )
+            )
 
-    #         print(
-    #                 f"Best plate: {best_plate} with confidence: {plate_confidence}"
-    #             )
+            print(
+                    f"Best plate: {best_plate} with confidence: {plate_confidence}"
+                )
         
-    #     update_mp_list_object_from_cam_id(
-    #         cam_id=cam_id,
-    #         mp_list=number_plate_detect_cache,
-    #         key="number_plates",
-    #         new_data=[],
-    #     )
+        update_mp_list_object_from_cam_id(
+            cam_id=cam_id,
+            mp_list=number_plate_detect_cache,
+            key="number_plates",
+            new_data=[],
+        )
 
-    #     return
+        return
