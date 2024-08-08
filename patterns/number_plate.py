@@ -77,8 +77,9 @@ def post_detection_pattern_for_num_plate_rfid(
     )["number_plates"]
 
     if len(number_plates) > 0:
+        new_entry = (number_plates, timestamp, frame)
         current_cache_number_plates.append(
-            [number_plates, timestamp, frame]
+            new_entry
         )
         print(len(current_cache_number_plates), cam_id, current_cache_number_plates)
         update_mp_list_object_from_cam_id(
