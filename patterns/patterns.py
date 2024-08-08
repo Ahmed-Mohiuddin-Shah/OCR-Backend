@@ -169,19 +169,19 @@ def run_system(
         p.start()
         processes.append(p)
 
-    test_process = mp.Process(
-        target=pre_detection_pattern_for_num_plate_rfid,
-        args=(
-            100,
-            "test.mp4",
-            "881,187,639,446",
-            "num_plate_rfid",
-            frame_queue,
-            number_plate_detect_cache,
-        ),
-    )
-    test_process.start()
-    processes.append(test_process)
+    # test_process = mp.Process(
+    #     target=pre_detection_pattern_for_num_plate_rfid,
+    #     args=(
+    #         100,
+    #         "test.mp4",
+    #         "881,187,639,446",
+    #         "num_plate_rfid",
+    #         frame_queue,
+    #         number_plate_detect_cache,
+    #     ),
+    # )
+    # test_process.start()
+    # processes.append(test_process)
 
     pocr = mp.Process(target=run_ocr, args=(frame_queue, ocr_results_queue))
     pocr.start()
