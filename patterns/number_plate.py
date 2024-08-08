@@ -89,12 +89,6 @@ def post_detection_pattern_for_num_plate_rfid(
 
         print(current_cache_number_plates)
 
-        update_mp_list_object_from_cam_id(
-            cam_id=cam_id,
-            mp_list=number_plate_detect_cache,
-            key="number_plates",
-            new_data=[],
-        )
 
         # print(current_cache_number_plates)
 
@@ -140,3 +134,9 @@ def post_detection_pattern_for_num_plate_rfid(
             else:
                 print("No valid plate found")
 
+        update_mp_list_object_from_cam_id(
+            cam_id=cam_id,
+            mp_list=number_plate_detect_cache,
+            key="number_plates",
+            new_data=[],
+        )
