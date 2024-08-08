@@ -328,12 +328,16 @@ def get_mp_list_object_from_cam_id(cam_id, mp_list):
             return item
     return None
 
+
 def update_mp_list_object_from_cam_id(cam_id, mp_list, key, new_data):
-    for item in mp_list:
-        if item["cam_id"] == cam_id:
-            item[key] = new_data
+    for idx, item in enumerate(mp_list):
+        if item["camera_id"] == cam_id:
+            updated_item = item.copy()
+            updated_item[key] = new_data
+            mp_list[idx] = updated_item
             return
     return None
+
 
 def resize_to_largest(images):
     # Determine the largest dimensions
