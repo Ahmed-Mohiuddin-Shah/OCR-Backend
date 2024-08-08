@@ -110,7 +110,12 @@ def post_detection_pattern_for_num_plate_rfid(
 
         avg_timestamp = average_timestamp(timestamps)
 
-        best_frame = frames[len(frames) // 2]
+        if len(frames) > 1:
+            best_frame = frames[len(frames) // 2]
+        elif len(frames) == 1:
+            best_frame = frames[0]
+        else:
+            best_frame = None
 
         if best_plate:
             
