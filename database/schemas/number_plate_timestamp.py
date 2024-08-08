@@ -1,10 +1,12 @@
 from pydantic import BaseModel
 from typing import Optional
 
+import datetime
+
 class NumberPlateTimestampBase(BaseModel):
     number_plate: str
     plate_confidence: float
-    timestamp: str
+    timestamp: datetime.datetime
     img_path: str
     cam_id: int
 
