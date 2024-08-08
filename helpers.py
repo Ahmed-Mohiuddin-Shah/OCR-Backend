@@ -343,5 +343,4 @@ def resize_to_largest(images):
 def check_if_car_in_frame(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     cars = car_cascade.detectMultiScale(gray, 1.1, 1)
-    if len(cars) > 0:
-        print("Car detected!")
+    return len(cars) > 0
