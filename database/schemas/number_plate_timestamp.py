@@ -5,7 +5,6 @@ class NumberPlateTimestampBase(BaseModel):
     number_plate: str
     plate_confidence: float
     timestamp: str
-    all_details: str
     img_path: str
     cam_id: int
 

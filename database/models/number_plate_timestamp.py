@@ -8,6 +8,5 @@ class NumberPlateTimestamp(Base):
     number_plate = Column(String(20), nullable=False)
     plate_confidence = Column(Float, nullable=False)
     timestamp = Column(DateTime, nullable=False)
-    all_details = Column(String(1000), nullable=False)
     img_path = Column(String(100), nullable=False)
     cam_id = Column(Integer, ForeignKey('camera.id'), nullable=False)
