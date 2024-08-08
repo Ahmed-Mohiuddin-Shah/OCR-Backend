@@ -56,8 +56,6 @@ def pre_detection_pattern_for_num_plate_rfid(
                 }
             )
 
-            time.sleep(0.01)
-
 def post_detection_pattern_for_num_plate_rfid(
     result: dict,
     number_plate_detect_cache,
@@ -66,32 +64,29 @@ def post_detection_pattern_for_num_plate_rfid(
     timestamp = result["timestamp"]
     number_plates = result["texts"]
 
-    print(number_plates, len(number_plates), cam_id)
-
     current_cache_number_plates = get_mp_list_object_from_cam_id(
         cam_id=cam_id, mp_list=number_plate_detect_cache
     )["number_plates"]
-    print(cam_id, "cache: ", current_cache_number_plates, )
 
     if len(number_plates) > 0:
         current_cache_number_plates.append(
             [number_plates, timestamp]
         )
+        print(len(number_plates), cam_id, current_cache_number_plates)
         update_mp_list_object_from_cam_id(
             cam_id=cam_id,
             mp_list=number_plate_detect_cache,
             key="number_plates",
             new_data=current_cache_number_plates,
         )
-    else:
+        return
+
+    if len(number_plates) == 0:
         current_cache_number_plates = get_mp_list_object_from_cam_id(
             cam_id=cam_id, mp_list=number_plate_detect_cache
         )["number_plates"]
 
         print(current_cache_number_plates)
-
-
-        # print(current_cache_number_plates)
 
         timestamps = []
         plates = []
@@ -99,7 +94,7 @@ def post_detection_pattern_for_num_plate_rfid(
         for plate, _timestamp in current_cache_number_plates:
             timestamps.append(_timestamp)
             plates.append(plate)
-        
+
         best_plate, plate_confidence = find_best_plate(plates)
 
         avg_timestamp = average_timestamp(timestamps)
@@ -108,9 +103,9 @@ def post_detection_pattern_for_num_plate_rfid(
             print(
                     f"Best plate: {best_plate} with confidence: {plate_confidence}"
                 )
-                # save to data.json
+            # save to data.json
 
-                # create data.json if not exists
+            # create data.json if not exists
             if not os.path.exists("data.json"):
                 with open("data.json", "w") as f:
                     json.dump([], f)
@@ -131,7 +126,7 @@ def post_detection_pattern_for_num_plate_rfid(
                 with open("data.json", "w") as f:
                     json.dump(data, f, indent=4)
                 print("Appended info to data.json.")
-                
+
             else:
                 print("No valid plate found")
 
@@ -141,3 +136,5 @@ def post_detection_pattern_for_num_plate_rfid(
             key="number_plates",
             new_data=[],
         )
+
+        return
