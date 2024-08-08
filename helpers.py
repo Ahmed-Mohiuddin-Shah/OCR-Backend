@@ -256,13 +256,19 @@ def append_to_data_json(info, filename='data.json'):
 def save_cnic_image(image, filename='image.jpg'):
     if not os.path.exists(config('CNIC_SAVE_PATH')):
         os.makedirs(config('CNIC_SAVE_PATH'))
-    
+
+    if image is None:
+        print("Image is None")
+
     cv2.imwrite(f"{config('CNIC_SAVE_PATH')}/{filename}", image)
     print(f"Image saved as {filename}.")
 
 def save_plate_image(image, filename='image.jpg'):
     if not os.path.exists(config('PLATE_SAVE_PATH')):
         os.makedirs(config('PLATE_SAVE_PATH'))
+
+    if image is None:
+        print("Image is None")
     
     cv2.imwrite(f"{config('PLATE_SAVE_PATH')}/{filename}", image)
     print(f"Image saved as {filename}.")
