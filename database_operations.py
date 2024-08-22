@@ -146,7 +146,7 @@ async def add_number_plate_to_database(
         print("Number plate not found")
         return False
 
-    if number_plate_confidence < 0.9:
+    if number_plate_confidence < 0.7:
         print("Number plate confidence level is below threshold")
         return False
 
