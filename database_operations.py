@@ -1,16 +1,49 @@
 from database.cruds.cam_type import get_cam_types
 from database.cruds.camera import get_cameras
+from database.cruds.number_plate_timestamp import create_number_plate_timestamp
 from database.cruds.timestamp import create_timestamp, check_if_card_entered_in_last
 from database.cruds.cnic import check_if_cnic_exists, update_cnic, create_cnic
 from database.utils.database import get_db
 
 from database.schemas.cnic import CnicCreate
+from database.schemas.number_plate_timestamp import NumberPlateTimestampCreate
 from database.schemas.timestamp import TimestampCreate
 from decouple import config
 
 import datetime
 
+from helpers import save_cnic_image, save_plate_image
+
 card_repeated_threshold_minutes = int(config("CARD_REPEATED_THRESHOLD_SECONDS"))
+
+
+async def get_db_config():
+    db = await anext(get_db())
+
+    config = {}
+
+    cameras = get_cameras(db)
+    types = get_cam_types(db)
+
+    db_cameras = []
+
+    for camera in cameras:
+        for cam_type in types:
+            if camera.type == cam_type.type:
+                db_cameras.append(
+                    {
+                        "id": camera.id,
+                        "name": camera.name,
+                        "type": cam_type.type,
+                        "cam_url": camera.cam_url,
+                        "crop": camera.crop,
+                    }
+                )
+
+    config["cameras"] = db_cameras
+
+    return config
+
 
 # adds data to postgreSQL database
 async def add_cnic_to_database(
@@ -21,6 +54,7 @@ async def add_cnic_to_database(
     all_info,
     timestamp: datetime.datetime.now,
     camera_id,
+    save_image=None,
 ):
 
     db = await anext(get_db())
@@ -31,11 +65,11 @@ async def add_cnic_to_database(
 
     if c_confidence < 0.9:
         print("CNIC Confidence level is below threshold")
-        return
+        return False
 
     if cnic is None:
         print("CNIC not found")
-        return
+        return False
 
     db_cnic = check_if_cnic_exists(db, cnic)
 
@@ -43,7 +77,7 @@ async def add_cnic_to_database(
         print(
             f"Card already entered in last {card_repeated_threshold_minutes} minutes: {cnic}"
         )
-        return
+        return False
 
     if db_cnic is not None:
         print(f"Cnic already exists in database: {cnic}")
@@ -89,34 +123,48 @@ async def add_cnic_to_database(
 
     new_timestamp = create_timestamp(db, timestamp)
 
+    if cnic is not None and save_image is not None:
+        save_cnic_image(save_image, cnic + ".jpg")
+
     print(
         f"Data added to database: {new_timestamp.cnic}, {new_timestamp.timestamp}, {new_timestamp.cam_id}"
     )
 
+    return True
 
-async def get_db_config():
+
+async def add_number_plate_to_database(
+    number_plate,
+    number_plate_confidence,
+    timestamp: datetime.datetime.now,
+    camera_id,
+    save_image=None,
+):
     db = await anext(get_db())
 
-    config = {}
+    if number_plate is None:
+        print("Number plate not found")
+        return False
 
-    cameras = get_cameras(db)
-    types = get_cam_types(db)
+    if number_plate_confidence < 0.7:
+        print("Number plate confidence level is below threshold")
+        return False
 
-    db_cameras = []
+    timestamp = NumberPlateTimestampCreate(
+        number_plate=number_plate,
+        plate_confidence=number_plate_confidence,
+        timestamp=timestamp,
+        img_path=f"number_plates/{number_plate}.jpg",
+        cam_id=camera_id,
+    )
 
-    for camera in cameras:
-        for cam_type in types:
-            if camera.type == cam_type.type:
-                db_cameras.append(
-                    {
-                        "id": camera.id,
-                        "name": camera.name,
-                        "type": cam_type.type,
-                        "cam_url": camera.cam_url,
-                        "crop": camera.crop,
-                    }
-                )
+    new_timestamp = create_number_plate_timestamp(db, timestamp)
 
-    config["cameras"] = db_cameras
+    if number_plate is not None and save_image is not None:
+        save_plate_image(save_image, number_plate + ".jpg")
 
-    return config
+    print(
+        f"Data added to database: {new_timestamp.number_plate}, {new_timestamp.timestamp}, {new_timestamp.cam_id}"
+    )
+
+    return True
