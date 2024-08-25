@@ -1180,12 +1180,43 @@ tqdm = "*"
 
 [[package]]
 name = "paddlepaddle-gpu"
-version = "2.6.1.post116"
+version = "2.6.1"
 description = "Parallel Distributed Deep Learning"
 optional = false
 python-versions = "*"
 files = [
-    {file = "paddlepaddle_gpu-2.6.1.post116-cp310-cp310-linux_x86_64.whl", hash = "sha256:10c5a1774d06b60c2ded328261966bf078246217e1769553bbe1aed639c10715"},
+    {file = "paddlepaddle_gpu-2.6.1-cp310-cp310-manylinux1_x86_64.whl", hash = "sha256:aa8f05b4ab73309395ce5bdf2f7bc140b50c92ac09d8a0f71f356ab41bc7488a"},
+    {file = "paddlepaddle_gpu-2.6.1-cp310-cp310-win_amd64.whl", hash = "sha256:a5943a7b5004a63ff485fa689584e139679f22155d94e81d10f0a278eb22061e"},
+    {file = "paddlepaddle_gpu-2.6.1-cp311-cp311-manylinux1_x86_64.whl", hash = "sha256:94c4c4036412cfe8bde6e05c9821ff826829d04d79138a9bde6b8302496da42b"},
+    {file = "paddlepaddle_gpu-2.6.1-cp311-cp311-win_amd64.whl", hash = "sha256:21d94b2ac65a7278b4fd526b2cae14ba1d33f8c3c0e1e4544d602e26ab04d5e5"},
+    {file = "paddlepaddle_gpu-2.6.1-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:42c902cfadcdd10e8b479921aaddc72428ac71977c9a3df9c26d70c37c58705f"},
+    {file = "paddlepaddle_gpu-2.6.1-cp312-cp312-win_amd64.whl", hash = "sha256:87899c143e5caf1db83aeff72acaa4964cf4d2e2515ff45cf8fb382b01e9c084"},
+    {file = "paddlepaddle_gpu-2.6.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:708ed77db35fb6dd5a7a774ec50c2eb079a2eb43eb90d9a2750dc72ff7516535"},
+    {file = "paddlepaddle_gpu-2.6.1-cp38-cp38-win_amd64.whl", hash = "sha256:c99a7510da57dccd525ca6c8c61cea8a0fec50a9e3b247c8ce0238c79c46b217"},
+    {file = "paddlepaddle_gpu-2.6.1-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:3bb8e6a406ce67b62b60c5b7551b71f6927005bc4eed95931faec0299453adab"},
+    {file = "paddlepaddle_gpu-2.6.1-cp39-cp39-win_amd64.whl", hash = "sha256:b5ecfb5a7730f89cb2688d9e561700682060c3aa2d870bcc354cfc28d2ab2664"},
+]
+
+[package.dependencies]
+astor = "*"
+decorator = "*"
+httpx = "*"
+numpy = ">=1.13"
+opt-einsum = "3.3.0"
+Pillow = "*"
+protobuf = [
+    {version = ">=3.20.2", markers = "platform_system != \"Windows\""},
+    {version = ">=3.1.0,<=3.20.2", markers = "platform_system == \"Windows\""},
+]
+
+[[package]]
+name = "paddlepaddle-gpu"
+version = "2.6.1.post117"
+description = "Parallel Distributed Deep Learning"
+optional = false
+python-versions = "*"
+files = [
+    {file = "paddlepaddle_gpu-2.6.1.post117-cp310-cp310-linux_x86_64.whl", hash = "sha256:3c52e5f94832a30ddd67c470d12e096476dce0b63f3d1150f4f12b4b919efa41"},
 ]
 
 [package.dependencies]
@@ -1202,7 +1233,7 @@ protobuf = [
 
 [package.source]
 type = "url"
-url = "https://paddle-wheel.bj.bcebos.com/2.6.1/linux/linux-gpu-cuda11.6-cudnn8.4.0-mkl-gcc8.2-avx/paddlepaddle_gpu-2.6.1.post116-cp310-cp310-linux_x86_64.whl"
+url = "https://paddle-wheel.bj.bcebos.com/2.6.1/linux/linux-gpu-cuda11.7-cudnn8.4.1-mkl-gcc8.2-avx/paddlepaddle_gpu-2.6.1.post117-cp310-cp310-linux_x86_64.whl"
 
 [[package]]
 name = "pillow"
@@ -2197,4 +2228,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "fa27bc38a2e90043bcdd8cdf3e841b32ac1a75018a1ebcd13c612b917c814690"
+content-hash = "f05f28dbbe8ff8ca2b88ea66c770dbd488bfa90a77663fc48920536b59e23773"
