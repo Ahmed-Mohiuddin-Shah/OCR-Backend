@@ -55,7 +55,6 @@ def post_detection_loop(
         else:
             continue
 
-
 def run_ocr(frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
 
     args = utility.parse_args()
@@ -87,7 +86,9 @@ def run_ocr(frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
             # print("Running OCR on frames")
 
             resized_frames = resize_to_largest(frames)
+
             detections = ts(resized_frames)
+
             boxes, texts, _ = process_batch_ocr_results(detections)
 
             result_entry = {}
@@ -117,7 +118,6 @@ def run_ocr(frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
             frames.append(queue_entry["frame"])
             # print("Frame added to frames list")
 
-
 def signal_handler(sig, frame, processes):
     print("Signal received, terminating processes...")
     for process in processes:
@@ -126,7 +126,6 @@ def signal_handler(sig, frame, processes):
         process.join()
     print("All processes terminated")
     sys.exit(0)
-
 
 def run_system(
     cams: list,
