@@ -15,6 +15,9 @@ from helpers import (
 
 from database_operations import add_cnic_to_database
 
+"""
+Pattern for CNIC detection
+"""
 
 def pre_detection_pattern_for_cnic(
     camera_id: int,

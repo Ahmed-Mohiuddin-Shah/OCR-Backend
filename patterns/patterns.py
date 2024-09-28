@@ -1,10 +1,4 @@
-import asyncio
-import datetime
-import time
-import cv2
 import multiprocessing as mp
-
-import os
 
 import sys
 import signal
@@ -26,13 +20,17 @@ from helpers import (
     resize_to_largest,
 )
 
-
 def post_detection_loop(
     ocr_results_queue: mp.Queue,
     previously_saved_cnic,
     card_already_in_holder,
     number_plate_detect_cache,
 ):
+
+    """
+    Post detection loop to process OCR results
+    based on the type of camera
+    """
 
     while True:
 
@@ -56,6 +54,11 @@ def post_detection_loop(
             continue
 
 def run_ocr(frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
+
+    """
+    Run OCR on frames in the frame queue
+    and put the results in the OCR results queue
+    """
 
     args = utility.parse_args()
 
@@ -119,6 +122,11 @@ def run_ocr(frame_queue: mp.Queue, ocr_results_queue: mp.Queue):
             # print("Frame added to frames list")
 
 def signal_handler(sig, frame, processes):
+
+    """
+    Signal handler to terminate processes
+    """
+
     print("Signal received, terminating processes...")
     for process in processes:
         process.terminate()
@@ -135,6 +143,11 @@ def run_system(
     card_already_in_holder,
     number_plate_detect_cache,
 ):
+
+    """
+    Run the main OCR system
+    """
+
     processes = []
 
     for cam in cams:
@@ -167,20 +180,6 @@ def run_system(
             continue
         p.start()
         processes.append(p)
-
-    # test_process = mp.Process(
-    #     target=pre_detection_pattern_for_num_plate_rfid,
-    #     args=(
-    #         100,
-    #         "test.mp4",
-    #         "881,187,639,446",
-    #         "num_plate_rfid",
-    #         frame_queue,
-    #         number_plate_detect_cache,
-    #     ),
-    # )
-    # test_process.start()
-    # processes.append(test_process)
 
     pocr = mp.Process(target=run_ocr, args=(frame_queue, ocr_results_queue))
     pocr.start()

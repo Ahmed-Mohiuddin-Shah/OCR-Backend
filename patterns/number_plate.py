@@ -16,6 +16,11 @@ from helpers import (
 
 from database_operations import add_number_plate_to_database
 
+
+"""
+Pattern for number plate detection
+"""
+
 def pre_detection_pattern_for_num_plate_rfid(
     camera_id: int,
     cam_url: str,
