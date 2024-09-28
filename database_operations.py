@@ -14,10 +14,16 @@ import datetime
 
 from helpers import save_cnic_image, save_plate_image
 
+# get card repeated threshold from .env file
 card_repeated_threshold_minutes = int(config("CARD_REPEATED_THRESHOLD_SECONDS"))
 
 
 async def get_db_config():
+
+    """
+    Get database configuration from database
+    """
+
     db = await anext(get_db())
 
     config = {}
@@ -56,6 +62,11 @@ async def add_cnic_to_database(
     camera_id,
     save_image=None,
 ):
+    
+    
+    """
+    Add cnic data to database
+    """
 
     db = await anext(get_db())
 
@@ -140,6 +151,11 @@ async def add_number_plate_to_database(
     camera_id,
     save_image=None,
 ):
+    
+    """
+    Add number plate data to database
+    """
+
     db = await anext(get_db())
 
     if number_plate is None:
