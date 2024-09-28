@@ -167,6 +167,11 @@ def crop_frame(frame, start_x, start_y, width, height):
 
 def get_cropped_frame(image):
 
+    """
+    Get the cropped frame of the input image by using the contours of the image.
+    Blanks out the rest of the image except the card by ignoring the black background.
+    """
+
     ROI = image
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -192,6 +197,10 @@ def get_cropped_frame(image):
     return ROI
 
 def extract_name_and_cnic(data):
+
+    """
+    Extracts the name and CNIC from the OCR data.
+    """
 
     print(data)
     
@@ -254,6 +263,9 @@ def append_to_data_json(info, filename='data.json'):
     print(f"\n{info} Appended info to {filename}.\n")
 
 def save_cnic_image(image, filename='image.jpg'):
+    """
+    Save the CNIC image to the specified path.
+    """
     if not os.path.exists(config('CNIC_SAVE_PATH')):
         os.makedirs(config('CNIC_SAVE_PATH'))
 
@@ -264,6 +276,9 @@ def save_cnic_image(image, filename='image.jpg'):
     print(f"Image saved as {filename}.")
 
 def save_plate_image(image, filename='image.jpg'):
+    """
+    Save the number plate image to the specified path.
+    """
     if not os.path.exists(config('NUM_PLATE_SAVE_PATH')):
         os.makedirs(config('NUM_PLATE_SAVE_PATH'))
 
@@ -312,6 +327,9 @@ def get_right_frame(frame):
     return frame[y1:y2, x1:x2]
 
 def check_if_card_in_frame(frame):
+    """
+    Check if a card is present in the frame.
+    """
 
     frame = get_right_frame(frame)
     # print("mean: ", np.mean(frame))
@@ -322,6 +340,11 @@ def check_if_card_in_frame(frame):
     return True
 
 def process_batch_ocr_results(ocr_results):
+
+    """
+    Process the batch OCR results to extract the boxes, texts, and giberish.
+    """
+
     boxes = ocr_results[0]
     texts = ocr_results[1]
     giberish = ocr_results[2]
@@ -329,6 +352,11 @@ def process_batch_ocr_results(ocr_results):
     return boxes, texts, giberish
 
 def get_mp_list_object_from_cam_id(cam_id, mp_list):
+
+    """
+    Get the object from the mp_list based on the cam_id.
+    """
+
     for item in mp_list:
         if item["cam_id"] == cam_id:
             return item
@@ -336,6 +364,11 @@ def get_mp_list_object_from_cam_id(cam_id, mp_list):
 
 
 def update_mp_list_object_from_cam_id(cam_id, mp_list, key, new_data):
+
+    """
+    Update the object from the mp_list based on the cam_id.
+    """
+
     for idx, item in enumerate(mp_list):
         if item["cam_id"] == cam_id:
             updated_item = item.copy()
@@ -346,6 +379,11 @@ def update_mp_list_object_from_cam_id(cam_id, mp_list, key, new_data):
 
 
 def resize_to_largest(images):
+
+    """
+    Resize all images to the largest dimensions.
+    """
+
     # Determine the largest dimensions
     max_height = max(image.shape[0] for image in images)
     max_width = max(image.shape[1] for image in images)
@@ -355,6 +393,9 @@ def resize_to_largest(images):
     return resized_images
 
 def check_if_car_in_frame(frame):
+    """
+    Check if a car is present in the frame.
+    """
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     cars = car_cascade.detectMultiScale(gray, 1.1, 1)
     return len(cars) > 0
